@@ -7,3 +7,5 @@
 #define fail_pattern    0b01110111
 volatile uint8_t left_dig;
 volatile uint8_t right_dig;
+
+void swap_digit();
