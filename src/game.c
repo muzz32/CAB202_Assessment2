@@ -8,6 +8,8 @@
 #include "button.h"
 #include "display.h"
 #include "buzzer.h"
+#include "timer.h"
+#include "game.h"
 
 typedef enum{
     GENERATE,
@@ -37,12 +39,13 @@ int main(void){
         switch (state)
         {
         case GENERATE:
-            reset_lfsr(&lfsr);
             if(lfsr.sequence_length > 1){
                lfsr.sequence_length++; 
             }
             break;
         case DISPLAY:
+            play_sequence();
+            reset_lfsr(&lfsr);
             break;
         case WAIT_INPUT:
             break;
@@ -70,8 +73,12 @@ void update_buttons(){
 
 void play_sequence(){
     uint8_t rand;
-    for(uint8_t i = 0; i < lfsr.sequence_length; i++){
-        step(&lfsr);
+    for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
+        elapsed_time = 0;
+        rand = step(&lfsr);
+        set_outputs(rand);
+        while (elapsed_time<(playback_delay>>1));
+        outputs_off();
     }
 }
 
@@ -107,5 +114,6 @@ void init_sys(){
     cli();
     lfsr_init(&lfsr);
     disp_init();
+    timer_init();
     sei();
 }

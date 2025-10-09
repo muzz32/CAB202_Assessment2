@@ -3,9 +3,15 @@
 #include "button.h"
 #include "display.h"
 
+#define MAX_DELAY 2000
+#define MIN_DELAY 250
 
-void pwm_init(){
-   //cli(); // Disable global intterupts
+uint16_t playback_delay = MIN_DELAY;
+volatile uint16_t elapsed_time = 0;
+
+
+
+void tca_init(){
     TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1_gc; // Configure prescalar
     TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP1_bm |TCA_SINGLE_CMP0_bm| TCA_SINGLE_WGMODE_SINGLESLOPE_gc | TCA_SINGLE_WGMODE_SINGLESLOPE_gc; //Enable WO1 on PB1 and WO0 on PB0
     PORTB.OUTSET = PIN1_bm;
@@ -15,7 +21,6 @@ void pwm_init(){
     TCA0.SINGLE.CMP0 = 0;
     TCA0.SINGLE.CMP1 = 0; //Set Compare
     TCA0.SINGLE.CTRLA |= TCA_SINGLE_ENABLE_bm; //Enable
-    //sei();
 }
 
 void tcb_init(){
@@ -30,8 +35,13 @@ void tcb_init(){
     TCB1.CTRLA = TCB_ENABLE_bm;      // Enable
 }
 
+void timer_init(){
+    tca_init();
+    tcb_init();
+}
+
 ISR(TCB0_INT_vect){
-    //Timer
+    elapsed_time ++;
     TCB0.INTFLAGS = TCB_CAPT_bm;
 }
 
