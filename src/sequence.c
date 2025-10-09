@@ -6,25 +6,31 @@
 
 uint32_t mask = 0xE2025CAB;
 uint32_t sid = 0x11958774;
+
 typedef struct{
     uint32_t state;
+    uint32_t start_state;
     int sequence_length;
 }LFSR;
 
 
-uint8_t step(LFSR shiftr){
-    uint8_t lsb = shiftr.state & 1;
-    shiftr.state >>= 1;
+uint8_t step(LFSR *lfsr){
+    uint8_t lsb = lfsr->state & 1;
+    lfsr->state >>= 1;
     if(lsb){
-        shiftr.state ^= mask;
+        lfsr->state ^= mask;
     }
-    return shiftr.state & 0b11;
+    return lfsr->state & 0b11;
 }
 
-LFSR lfsr_init(LFSR lfsr){
-    lfsr.state = sid;
-    lfsr.sequence_length = 1;
-    return lfsr;
+void reset_lfsr(LFSR *lfsr){
+    lfsr->state = lfsr->start_state;
+}
+
+void lfsr_init(LFSR *lfsr){
+    lfsr->start_state = sid;
+    lfsr->state = lfsr->start_state;
+    lfsr->sequence_length = 1;
 }
 
 // void state_lfsr(){

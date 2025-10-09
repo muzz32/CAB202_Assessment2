@@ -1,0 +1,13 @@
+#include <stdint.h>
+
+typedef struct{
+    uint32_t state;
+    uint32_t start_state;
+    int sequence_length;
+}LFSR;
+
+void lfsr_init(LFSR *lfsr);
+
+uint8_t step(LFSR *lfsr);
+
+void reset_lfsr(LFSR *lfsr);

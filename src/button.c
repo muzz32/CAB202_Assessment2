@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-volatile uint8_t pb_debounced_state = 0xFF;
+volatile uint8_t button_debounced = 0xFF;
 
 void pushbut_init(){
     PORTA.PIN4CTRL = PORT_PULLUPEN_bm;
@@ -15,12 +15,12 @@ void get_debounce(){
     static uint8_t count1 = 0;
 
     
-    uint8_t pb_sample = PORTA.IN;
-    uint8_t change = pb_sample ^ pb_debounced_state;
+    uint8_t sample = PORTA.IN;
+    uint8_t change = sample ^ button_debounced;
     
 
     count1 = (count1 ^ count0) & change;
     count0 = ~count0 & change;
 
-    pb_debounced_state ^= (count1 & count0);
+    button_debounced ^= (count1 & count0);
 }

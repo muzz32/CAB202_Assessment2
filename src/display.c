@@ -4,8 +4,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "display.h"
-volatile uint8_t left_dig;
-volatile uint8_t right_dig;
+extern uint8_t left_dig;
+extern uint8_t right_dig;
 
 //     _____
 //    |  A  |
@@ -31,7 +31,6 @@ void disp_init(){
     right_dig = disp_off;
 
     SPI0.CTRLA |= SPI_ENABLE_bm;
-
 }
 
 void set_display(uint8_t left, uint8_t right){
@@ -55,6 +54,5 @@ ISR(SPI0_INT_vect){
     //rising edge on DISP_LATCH
     PORTA.OUTCLR = PIN1_bm;
     PORTA.OUTSET = PIN1_bm;  
-
     SPI0.INTFLAGS = SPI_IF_bm;
 }
