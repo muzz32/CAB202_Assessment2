@@ -10,7 +10,8 @@ uint32_t sid = 0x11958774;
 typedef struct{
     uint32_t state;
     uint32_t start_state;
-    int sequence_length;
+    uint32_t sequence_length;
+    uint32_t sequence_curr;
 }LFSR;
 
 
@@ -30,7 +31,8 @@ void reset_lfsr(LFSR *lfsr){
 void lfsr_init(LFSR *lfsr){
     lfsr->start_state = sid;
     lfsr->state = lfsr->start_state;
-    lfsr->sequence_length = 1;
+    lfsr->sequence_length = 0;
+    lfsr->sequence_curr = 1;
 }
 
 // void state_lfsr(){

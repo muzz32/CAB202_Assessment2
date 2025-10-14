@@ -38,6 +38,7 @@ void set_display(uint8_t left, uint8_t right){
     right_dig = right;
 }
 
+
 void swap_digit(){
     static int digit = 0;
     if (digit) {
