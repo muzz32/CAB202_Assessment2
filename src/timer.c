@@ -2,24 +2,25 @@
 #include <avr/interrupt.h>
 #include "button.h"
 #include "display.h"
+#include "uart.h"
+#include <stdint.h>
 
 #define MAX_DELAY 2000
 #define MIN_DELAY 250
 
-uint16_t playback_delay = MIN_DELAY;
+uint16_t playback_delay = MAX_DELAY;
 volatile uint16_t elapsed_time = 0;
 
 
 
 void tca_init(){
     TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1_gc; // Configure prescalar
-    TCA0.SINGLE.CTRLB = TCA_SINGLE_CMP1_bm |TCA_SINGLE_CMP0_bm| TCA_SINGLE_WGMODE_SINGLESLOPE_gc | TCA_SINGLE_WGMODE_SINGLESLOPE_gc; //Enable WO1 on PB1 and WO0 on PB0
-    PORTB.OUTSET = PIN1_bm;
-    PORTB.DIRSET = PIN1_bm | PIN0_bm;
-    PORTB.OUTCLR = PIN0_bm;//Enable pins for disp_en
-    TCA0.SINGLE.PER = 10000; //Set top
+    TCA0.SINGLE.CTRLB =TCA_SINGLE_CMP0_bm| TCA_SINGLE_WGMODE_SINGLESLOPE_gc; //Enable WO1 on PB1 and WO0 on PB0
+    PORTB.DIRSET = PIN0_bm;
+    PORTB.OUTCLR = PIN0_bm;
+    TCA0.SINGLE.PER = 0; //Set top
     TCA0.SINGLE.CMP0 = 0;
-    TCA0.SINGLE.CMP1 = 0; //Set Compare
+    //TCA0.SINGLE.CMP1 = 0xFFFF; //Set Compare
     TCA0.SINGLE.CTRLA |= TCA_SINGLE_ENABLE_bm; //Enable
 }
 
@@ -46,7 +47,7 @@ ISR(TCB0_INT_vect){
 }
 
 ISR(TCB1_INT_vect){
-    get_debounce();
     swap_digit();
+    get_debounce();
     TCB1.INTFLAGS = TCB_CAPT_bm;
 }

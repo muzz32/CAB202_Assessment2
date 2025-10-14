@@ -23,7 +23,9 @@ void disp_init(){
     SPI0.CTRLA = SPI_MASTER_bm; // Enable this as the master 
     PORTA.OUTSET = PIN1_bm; // DISP_LATCH initial high
     PORTA.DIRSET = PIN1_bm; // set DISP_LATCH pin as output
-    SPI0.CTRLB &= ~SPI_BUFEN_bm; //disable buffer mode
+    PORTB.OUTSET = PIN1_bm;
+    PORTB.DIRSET = PIN1_bm; //Set display as out put
+    //SPI0.CTRLB &= ~SPI_BUFEN_bm; //disable buffer mode
     SPI0.CTRLB = SPI_SSD_bm;       // Mode 0, client select disable, unbuffered
     SPI0.INTCTRL = SPI_IE_bm;  //Enable interrupts
 
@@ -31,6 +33,7 @@ void disp_init(){
     right_dig = DISP_OFF;
 
     SPI0.CTRLA |= SPI_ENABLE_bm;
+    SPI0.DATA = right_dig;
 }
 
 void set_display(uint8_t left, uint8_t right){

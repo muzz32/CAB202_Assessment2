@@ -3,7 +3,7 @@
 
 volatile uint8_t button_debounced = 0xFF;
 
-void pushbut_init(){
+void button_init(){
     PORTA.PIN4CTRL = PORT_PULLUPEN_bm;
     PORTA.PIN5CTRL = PORT_PULLUPEN_bm;
     PORTA.PIN6CTRL = PORT_PULLUPEN_bm;

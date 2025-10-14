@@ -10,6 +10,7 @@
 #include "buzzer.h"
 #include "timer.h"
 #include "game.h"
+#include "uart.h"
 
 typedef enum{
     PROGRESS,
@@ -68,7 +69,7 @@ int main(void){
             }
             break;
         case WAIT_RELEASE:
-            if(elapsed_time<(playback_delay>>1)){
+            if(elapsed_time >= (playback_delay>>1)){
                 outputs_off();   
             }
             if(button_release){
@@ -131,7 +132,9 @@ void play_sequence(){
     uint8_t rand;
     for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
         rand = step(&lfsr);
+        //printf("%d ", rand);
         set_outputs(rand);
+        //printf("left: %d right: %d\n", left_dig, right_dig);
         while (elapsed_time<(playback_delay>>1));
         outputs_off();
     }
@@ -181,5 +184,7 @@ void init_sys(){
     lfsr_init(&lfsr);
     disp_init();
     timer_init();
+    uart_init();
+    button_init();
     sei();
 }
