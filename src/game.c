@@ -11,6 +11,7 @@
 #include "timer.h"
 #include "game.h"
 #include "uart.h"
+#include "delay.h"
 
 typedef enum{
     PROGRESS,
@@ -186,5 +187,6 @@ void init_sys(){
     timer_init();
     uart_init();
     button_init();
+    adc_init();
     sei();
 }
