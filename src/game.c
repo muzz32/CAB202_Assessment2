@@ -162,6 +162,7 @@ void set_outputs(uint8_t index){
     }
     set_buzzer(index);
     elapsed_time = 0;
+    update_delay();
 }
 
 void outputs_off(){
