@@ -43,7 +43,7 @@ int main(void){
         {
         case PROGRESS:
             lfsr.sequence_length++;
-            lfsr.sequence_curr = 0;
+            lfsr.sequence_index = 0;
             state = DISPLAY;
             break;
         case DISPLAY:
@@ -70,42 +70,39 @@ int main(void){
             }
             break;
         case WAIT_RELEASE:
-            if(elapsed_time >= (playback_delay>>1)){
-                outputs_off();   
-            }
-            if(button_release){
-                outputs_off();
-                state=HANDLE_INPUT;
+            if(elapsed_time >= (playback_delay>>1) || button_release){
+                outputs_off();  
+                state=HANDLE_INPUT; 
             }
             break;
         case HANDLE_INPUT:
             curr_seq = step(&lfsr);
-            lfsr.sequence_curr++;
+            lfsr.sequence_index++;
             if(curr_seq == input)
             {
+                success();
                 state = SUCCESS;
             }
             else{
+                fail();
                 state = FAIL;
             }                        
             break;
         case SUCCESS:
-            success();
             if (elapsed_time >= playback_delay)
             {
                 outputs_off();
-                if (lfsr.sequence_curr < lfsr.sequence_length)
+                if (lfsr.sequence_index < lfsr.sequence_length)
                 {
                     state = WAIT_INPUT;
                 }
-                else if (lfsr.sequence_curr == lfsr.sequence_length){
+                else if (lfsr.sequence_index == lfsr.sequence_length){
                     state = PROGRESS;
                 }
             }
             
             break;
         case FAIL:
-            fail();
             if(elapsed_time >= playback_delay){
                 outputs_off();
                 lfsr.sequence_length = 0;
@@ -173,11 +170,13 @@ void outputs_off(){
 void success(){
     set_display(SUCCESS_PATTERN, SUCCESS_PATTERN);
     elapsed_time = 0;
+    update_delay();
 }
 
 void fail(){
     set_display(FAIL_PATTERN, FAIL_PATTERN);
     elapsed_time = 0;
+    update_delay();
 }
 
 
