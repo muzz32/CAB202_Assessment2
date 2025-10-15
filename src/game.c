@@ -19,6 +19,7 @@ typedef enum{
     WAIT_INPUT,
     WAIT_RELEASE,
     HANDLE_INPUT,
+    CORRECT,
     SUCCESS,
     FAIL    
 }game_state;
@@ -80,8 +81,13 @@ int main(void){
             lfsr.sequence_index++;
             if(curr_seq == input)
             {
-                success();
-                state = SUCCESS;
+                if(lfsr.sequence_index == lfsr.sequence_length){
+                    success();
+                    state = SUCCESS;
+                }
+                else if(lfsr.sequence_index < lfsr.sequence_length){
+                    state = WAIT_INPUT;
+                }
             }
             else{
                 fail();
@@ -92,13 +98,7 @@ int main(void){
             if (elapsed_time >= playback_delay)
             {
                 outputs_off();
-                if (lfsr.sequence_index < lfsr.sequence_length)
-                {
-                    state = WAIT_INPUT;
-                }
-                else if (lfsr.sequence_index == lfsr.sequence_length){
-                    state = PROGRESS;
-                }
+                state = PROGRESS;
             }
             
             break;

@@ -4,7 +4,7 @@ typedef struct{
     uint32_t state;
     uint32_t start_state;
     uint32_t sequence_length;
-    uint32_t sequence_curr;
+    uint32_t sequence_index;
 }LFSR;
 
 void lfsr_init(LFSR *lfsr);
