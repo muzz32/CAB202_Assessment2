@@ -109,6 +109,10 @@ int main(void){
         case FAIL:
             if(elapsed_time >= playback_delay){
                 outputs_off();
+                display_score(lfsr.sequence_length);
+                elapsed_time = 0;
+                while (elapsed_time<playback_delay);
+                outputs_off(); 
                 lfsr.sequence_length = 0;
                 lfsr.start_state = lfsr.state;
                 state = PROGRESS;
