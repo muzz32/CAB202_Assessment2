@@ -71,8 +71,11 @@ int main(void){
             }
             break;
         case WAIT_RELEASE:
-            if(elapsed_time >= (playback_delay>>1) || button_release){
+            if(elapsed_time >= (playback_delay>>1)){
                 outputs_off();  
+            }
+            if(button_release){
+                outputs_off();
                 state=HANDLE_INPUT; 
             }
             break;
@@ -98,6 +101,7 @@ int main(void){
             if (elapsed_time >= playback_delay)
             {
                 outputs_off();
+                reset_lfsr(&lfsr);
                 state = PROGRESS;
             }
             
@@ -130,9 +134,7 @@ void play_sequence(){
     uint8_t rand;
     for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
         rand = step(&lfsr);
-        //printf("%d ", rand);
         set_outputs(rand);
-        //printf("left: %d right: %d\n", left_dig, right_dig);
         while (elapsed_time<(playback_delay>>1));
         outputs_off();
     }

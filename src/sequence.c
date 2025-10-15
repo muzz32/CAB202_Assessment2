@@ -32,7 +32,7 @@ void lfsr_init(LFSR *lfsr){
     lfsr->start_state = sid;
     lfsr->state = lfsr->start_state;
     lfsr->sequence_length = 0;
-    lfsr->sequence_index = 1;
+    lfsr->sequence_index = 0;
 }
 
 // void state_lfsr(){
