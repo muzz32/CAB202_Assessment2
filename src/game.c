@@ -71,8 +71,9 @@ int main(void){
             }
             break;
         case WAIT_RELEASE:
-            if(elapsed_time >= (playback_delay>>1)){
+            if(elapsed_time >= (playback_delay>>1) || button_release){
                 outputs_off();  
+                state=HANDLE_INPUT; 
             }
             if(button_release){
                 outputs_off();
