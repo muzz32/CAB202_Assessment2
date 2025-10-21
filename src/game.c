@@ -111,6 +111,7 @@ int main(void){
             if(elapsed_time >= playback_delay){
                 outputs_off();
                 display_score(lfsr.sequence_length);
+                printf("%ld", lfsr.sequence_length);
                 elapsed_time = 0;
                 while (elapsed_time<playback_delay);
                 outputs_off(); 
@@ -142,6 +143,8 @@ void play_sequence(){
         set_outputs(rand);
         while (elapsed_time<(playback_delay>>1));
         outputs_off();
+        elapsed_time = 0;  
+        while (elapsed_time < (playback_delay>>1));
     }
 }
 
