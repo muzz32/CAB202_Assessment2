@@ -15,7 +15,7 @@ void adc_init(){
     ADC0.CTRLC = (4 << ADC_TIMEBASE_gp) | ADC_REFSEL_VDD_gc; 
     ADC0.CTRLF = ADC_FREERUN_bm; //Freerun mode
     ADC0.MUXPOS = ADC_MUXPOS_AIN2_gc; // Read on the ain2 (pos) spot
-    ADC0.COMMAND = ADC_MODE_SINGLE_8BIT_gc | ADC_START_IMMEDIATE_gc;
+    ADC0.COMMAND = ADC_MODE_SINGLE_12BIT_gc | ADC_START_IMMEDIATE_gc;
 }
 
 void update_delay(){
