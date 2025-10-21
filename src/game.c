@@ -66,8 +66,9 @@ int main(void){
                 else if(button_input & PIN7_bm){
                     input = 3;
                 }
-                set_outputs(input);
                 update_delay();
+                set_outputs(input);
+                elapsed_time = 0;  
                 state = WAIT_RELEASE;
             }
             break;
@@ -76,10 +77,6 @@ int main(void){
                 outputs_off();  
                 state=HANDLE_INPUT; 
             }
-            // if(button_release){
-            //     outputs_off();
-            //     state=HANDLE_INPUT; 
-            // }
             break;
         case HANDLE_INPUT:
             curr_seq = step(&lfsr);
@@ -87,7 +84,9 @@ int main(void){
             if(curr_seq == input)
             {
                 if(lfsr.sequence_index == lfsr.sequence_length){
-                    success();
+                    update_delay();
+                    set_display(SUCCESS_PATTERN, SUCCESS_PATTERN);
+                    elapsed_time = 0;
                     state = SUCCESS;
                 }
                 else if(lfsr.sequence_index < lfsr.sequence_length){
@@ -95,7 +94,9 @@ int main(void){
                 }
             }
             else{
-                fail();
+                update_delay();
+                set_display(FAIL_PATTERN, FAIL_PATTERN);
+                elapsed_time = 0;
                 state = FAIL;
             }                        
             break;
@@ -111,8 +112,8 @@ int main(void){
         case FAIL:
             if(elapsed_time >= playback_delay){
                 outputs_off();
+                update_delay();
                 display_score(lfsr.sequence_length);
-                //printf("%ld", lfsr.sequence_length);
                 elapsed_time = 0;
                 while (elapsed_time<playback_delay);
                 outputs_off(); 
@@ -141,10 +142,11 @@ void update_buttons(){
 
 void play_sequence(){
     uint8_t rand;
-    update_delay();
     for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
         rand = step(&lfsr);
+        update_delay();
         set_outputs(rand);
+        elapsed_time = 0;  
         while (elapsed_time<(playback_delay>>1));
         outputs_off();
         elapsed_time = 0;  
@@ -172,27 +174,12 @@ void set_outputs(uint8_t index){
         break;
     }
     set_buzzer(index);
-    elapsed_time = 0;
-    //update_delay();
 }
 
 void outputs_off(){
     buzzer_off();
     set_display(DISP_OFF, DISP_OFF);
 }
-
-void success(){
-    set_display(SUCCESS_PATTERN, SUCCESS_PATTERN);
-    elapsed_time = 0;
-    update_delay();
-}
-
-void fail(){
-    set_display(FAIL_PATTERN, FAIL_PATTERN);
-    elapsed_time = 0;
-    update_delay();
-}
-
 
 void init_sys(){
     cli();

@@ -4,5 +4,3 @@ void play_sequence();
 void set_outputs(uint8_t index);
 void outputs_off();
 void init_sys();
-void fail();
-void success();
