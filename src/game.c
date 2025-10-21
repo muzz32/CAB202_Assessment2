@@ -67,6 +67,7 @@ int main(void){
                     input = 3;
                 }
                 set_outputs(input);
+                update_delay();
                 state = WAIT_RELEASE;
             }
             break;
@@ -140,6 +141,7 @@ void update_buttons(){
 
 void play_sequence(){
     uint8_t rand;
+    update_delay();
     for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
         rand = step(&lfsr);
         set_outputs(rand);
@@ -171,7 +173,7 @@ void set_outputs(uint8_t index){
     }
     set_buzzer(index);
     elapsed_time = 0;
-    update_delay();
+    //update_delay();
 }
 
 void outputs_off(){
