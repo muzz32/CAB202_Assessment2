@@ -75,10 +75,10 @@ int main(void){
                 outputs_off();  
                 state=HANDLE_INPUT; 
             }
-            if(button_release){
-                outputs_off();
-                state=HANDLE_INPUT; 
-            }
+            // if(button_release){
+            //     outputs_off();
+            //     state=HANDLE_INPUT; 
+            // }
             break;
         case HANDLE_INPUT:
             curr_seq = step(&lfsr);
@@ -111,10 +111,12 @@ int main(void){
             if(elapsed_time >= playback_delay){
                 outputs_off();
                 display_score(lfsr.sequence_length);
-                printf("%ld", lfsr.sequence_length);
+                //printf("%ld", lfsr.sequence_length);
                 elapsed_time = 0;
                 while (elapsed_time<playback_delay);
                 outputs_off(); 
+                elapsed_time = 0;
+                while (elapsed_time<playback_delay);
                 lfsr.sequence_length = 0;
                 lfsr.start_state = lfsr.state;
                 state = PROGRESS;

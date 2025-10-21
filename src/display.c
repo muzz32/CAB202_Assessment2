@@ -44,18 +44,32 @@ void set_display(uint8_t left, uint8_t right){
 
 //https://stackoverflow.com/questions/21074682/dividing-a-number-without-using-division-operator-in-c
 void display_score(uint8_t score){
-    if(score>=99){
-        set_display(DISP_NINE, DISP_NINE);
+    
+    uint8_t over_hundred = 0;
+    if(score>99){
+        score-=100;
+        over_hundred = 1;
+    }
+
+    uint8_t left_num = 0; 
+    uint8_t right_num = score; //temp storing
+    while(left_num>=10){
+        right_num = right_num - 10; //the remainder of the division by 10 (gives whats left over by dividing by 10, giving the right dig)
+        left_num++; //Amount of times dig can be divided by 10 (gives first dig)
+    }
+
+    if(left_num == 0){
+        if (over_hundred){
+            set_display(DISP_ZERO, nums[right_num]);
+        }
+        else{
+            set_display(DISP_OFF, nums[right_num]);
+        }
     }
     else{
-        uint8_t left_num = 0; 
-        uint8_t right_num = score; //temp storing
-        while(left_num>=10){
-            right_num = right_num - 10; //the remainder of the division by 10 (gives whats left over by dividing by 10, giving the right dig)
-            left_num++; //Amount of times dig can be divided by 10 (gives first dig)
-        }
         set_display(nums[left_num], nums[right_num]);
     }
+
 }
 
 void swap_digit(){
