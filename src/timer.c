@@ -8,7 +8,7 @@
 #define MAX_DELAY 2000
 #define MIN_DELAY 250
 
-uint16_t playback_delay = MAX_DELAY;
+//uint16_t playback_delay = MAX_DELAY;
 volatile uint16_t elapsed_time = 0;
 
 
