@@ -5,12 +5,22 @@
 #include <util/delay.h>
 #include <math.h>
 
-#define E_HIGH 9387
-#define C_SHARP 11163
-#define A 7032
-#define E_LOW 2634
+#define MIN_FREQ 167     // 20 kHz
+#define MAX_FREQ 166650  // 20 Hz
 
-static const uint16_t tops[4] = {E_HIGH, C_SHARP, A, E_LOW};
+// E_HIGH 9387
+// C_SHARP 11163
+// A 7032
+// E_LOW 2634
+
+static uint32_t tops[4] = {9387, 11163, 7032, 2634};
+
+void buzzer_init(){
+    tops[0] = 9387;
+    tops[1] = 11163;
+    tops[2] = 7032;
+    tops[3] = 2634;
+}
 
 void set_buzzer(uint8_t index){
     TCA0.SINGLE.PERBUF = tops[index];
@@ -21,7 +31,39 @@ void buzzer_off(){
     TCA0.SINGLE.CMP0BUF = 0;
 }
 
+void increase_octave(){
+    uint8_t unsafe_to_change = 0;
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        // If the value divided by two is less than the min freq, dont change
+        if(tops[i] << 1 < MIN_FREQ){
+            unsafe_to_change = 1;
+        } 
+    }
+    if(!unsafe_to_change){
+        for (uint8_t i = 0; i < 3; i++)
+        {
+            tops[i] <<= 1;
+        }
+    } 
+}
 
+void decrease_octave(){
+    uint8_t unsafe_to_change = 0;
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        // If the value multiplied by two is more than the max freq, dont change
+        if(tops[i] >> 1 < MAX_FREQ){
+            unsafe_to_change = 1;
+        } 
+    }
+    if(!unsafe_to_change){
+        for (uint8_t i = 0; i < 3; i++)
+        {
+            tops[i] >>= 1;
+        }
+    } 
+}
 
 
 

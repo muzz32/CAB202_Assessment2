@@ -13,29 +13,31 @@
 #include "uart.h"
 #include "delay.h"
 
-typedef enum{
-    PROGRESS,
-    DISPLAY,
-    WAIT_INPUT,
-    WAIT_RELEASE,
-    HANDLE_INPUT,
-    CORRECT,
-    SUCCESS,
-    FAIL    
-}game_state;
+// typedef enum{
+//     PROGRESS,
+//     DISPLAY,
+//     WAIT_INPUT,
+//     WAIT_RELEASE,
+//     HANDLE_INPUT,
+//     CORRECT,
+//     SUCCESS,
+//     FAIL,
+//     RESET    
+// }game_state;
 
 uint8_t curr_button_state, prev_button_state = 0xFF;
 uint8_t button_change, button_input, button_release = 0;
 uint8_t input, curr_seq;
 
-LFSR lfsr;
+volatile LFSR lfsr;
 
+volatile game_state state = PROGRESS;
 
 int main(void){
 
     init_sys();
 
-    game_state state = PROGRESS;
+    //game_state state = PROGRESS;
 
     while (1)
     {
@@ -43,6 +45,9 @@ int main(void){
         switch (state)
         {
         case PROGRESS:
+            if(lfsr.seed){
+                lfsr.state = lfsr.seed;
+            }
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
             state = DISPLAY;
@@ -124,9 +129,13 @@ int main(void){
                 state = PROGRESS;
             }
             break;
-        default:
-            state = PROGRESS;
+        case RESET:
+            buzzer_init();
+            lfsr_init(&lfsr);
             outputs_off();
+            state = PROGRESS;
+        default:
+            state = RESET;
             break;
         }
     }
@@ -187,6 +196,7 @@ void init_sys(){
     lfsr_init(&lfsr);
     disp_init();
     timer_init();
+    buzzer_init();
     uart_init();
     button_init();
     adc_init();

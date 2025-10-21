@@ -12,6 +12,7 @@ typedef struct{
     uint32_t start_state;
     uint32_t sequence_length;
     uint32_t sequence_index;
+    uint32_t seed;
 }LFSR;
 
 
@@ -33,6 +34,7 @@ void lfsr_init(LFSR *lfsr){
     lfsr->state = lfsr->start_state;
     lfsr->sequence_length = 0;
     lfsr->sequence_index = 0;
+    lfsr->seed = 0;
 }
 
 // void state_lfsr(){
