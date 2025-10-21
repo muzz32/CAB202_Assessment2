@@ -10,14 +10,14 @@ void adc_init(){
 
     //POT on PA2
     ADC0.CTRLA = ADC_ENABLE_bm; // Enable the adc
-    ADC0.CTRLB = ADC_PRESC_DIV8_gc; //give it 16 coz why not
+    ADC0.CTRLB = ADC_PRESC_DIV2_gc; //give it 16 coz why not
     ADC0.CTRLC = ADC_REFSEL_VDD_gc; //Set the reference to the Vdd (0-3.3V)
     ADC0.CTRLF = ADC_FREERUN_bm; //Freerun mode
     ADC0.MUXPOS = ADC_MUXPOS_AIN2_gc; // Read on the ain2 (pos) spot
-    ADC0.COMMAND = ADC_MODE_SINGLE_8BIT_gc | ADC_START_IMMEDIATE_gc;
+    ADC0.COMMAND = ADC_MODE_SINGLE_12BIT_gc | ADC_START_IMMEDIATE_gc;
 }
 
 void update_delay(){
-    playback_delay = MIN_DELAY + (((uint16_t)(MAX_DELAY - MIN_DELAY) * ADC0.RESULT) >> 8);
+    playback_delay = MIN_DELAY + (((uint16_t)(MAX_DELAY - MIN_DELAY) * ADC0.RESULT) >> 12);
     //printf("%d\n", playback_delay);
 }
