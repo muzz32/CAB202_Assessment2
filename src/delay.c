@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <avr/io.h>
+#include <stdio.h>
 
 #define MAX_DELAY 2000
 #define MIN_DELAY 250
@@ -18,4 +19,5 @@ void adc_init(){
 
 void update_delay(){
     playback_delay = MIN_DELAY + (((uint16_t)(MAX_DELAY - MIN_DELAY) * ADC0.RESULT) >> 8);
+    //printf("%d\n", playback_delay);
 }
