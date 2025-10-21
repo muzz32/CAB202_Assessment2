@@ -142,9 +142,10 @@ void update_buttons(){
 
 void play_sequence(){
     uint8_t rand;
+    update_delay();
     for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
         rand = step(&lfsr);
-        update_delay();
+        
         set_outputs(rand);
         elapsed_time = 0;  
         while (elapsed_time<(playback_delay>>1));
