@@ -33,34 +33,34 @@ void buzzer_off(){
 
 void increase_octave(){
     uint8_t unsafe_to_change = 0;
-    for (uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < 4; i++)
     {
         // If the value divided by two is less than the min freq, dont change
-        if(tops[i] << 1 < MIN_FREQ){
+        if((tops[i] << 1) < MIN_FREQ){
             unsafe_to_change = 1;
         } 
     }
     if(!unsafe_to_change){
-        for (uint8_t i = 0; i < 3; i++)
+        for (uint8_t i = 0; i < 4; i++)
         {
-            tops[i] <<= 1;
+            tops[i] >>= 1;
         }
     } 
 }
 
 void decrease_octave(){
     uint8_t unsafe_to_change = 0;
-    for (uint8_t i = 0; i < 3; i++)
+    for (uint8_t i = 0; i < 4; i++)
     {
         // If the value multiplied by two is more than the max freq, dont change
-        if(tops[i] >> 1 < MAX_FREQ){
+        if((tops[i] >> 1) < MAX_FREQ){
             unsafe_to_change = 1;
         } 
     }
     if(!unsafe_to_change){
-        for (uint8_t i = 0; i < 3; i++)
+        for (uint8_t i = 0; i < 4; i++)
         {
-            tops[i] >>= 1;
+            tops[i] <<= 1;
         }
     } 
 }
