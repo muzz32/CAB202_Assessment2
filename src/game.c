@@ -48,6 +48,7 @@ int main(void){
         switch (state)
         {
         case PROGRESS:
+            outputs_off();
             if(lfsr.seed){
                 lfsr.state = lfsr.seed;
             }
