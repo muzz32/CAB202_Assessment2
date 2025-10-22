@@ -78,21 +78,19 @@ int main(void){
                 set_outputs(input);
                 elapsed_time = 0;  
                 state = WAIT_RELEASE;
+                button_is_released = 0;
             }
             break;
         case WAIT_RELEASE:
-
-            if(button_is_released && elapsed_time >= (playback_delay>>1)){
-                outputs_off();
-                state = HANDLE_INPUT;
-                button_is_released = 0;
+            if(!button_is_released){
+                if(button_release) button_is_released = 1;
             }
-            else if (button_release && elapsed_time >= (playback_delay>>1)) {
-                outputs_off();
-                state = HANDLE_INPUT;
-            }
-            else if (button_release && elapsed_time < (playback_delay>>1)){
-                button_is_released = 1;
+            else{
+                if (elapsed_time >= (playback_delay>>1))
+                {
+                    outputs_off();
+                    state = HANDLE_INPUT;
+                }
             }
             break;
         case HANDLE_INPUT:
