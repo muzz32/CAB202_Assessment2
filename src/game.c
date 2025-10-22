@@ -74,7 +74,7 @@ int main(void){
                 else if(button_input & PIN7_bm){
                     input = 3;
                 }
-                update_delay();
+                //update_delay();
                 set_outputs(input);
                 elapsed_time = 0;  
                 state = WAIT_RELEASE;
@@ -92,7 +92,7 @@ int main(void){
             if(curr_seq == input)
             {
                 if(lfsr.sequence_index == lfsr.sequence_length){
-                    update_delay();
+                    //update_delay();
                     set_display(SUCCESS_PATTERN, SUCCESS_PATTERN);
                     elapsed_time = 0;
                     state = SUCCESS;
@@ -102,7 +102,7 @@ int main(void){
                 }
             }
             else{
-                update_delay();
+                //update_delay();
                 set_display(FAIL_PATTERN, FAIL_PATTERN);
                 elapsed_time = 0;
                 state = FAIL;
@@ -120,7 +120,7 @@ int main(void){
         case FAIL:
             if(elapsed_time >= playback_delay){
                 outputs_off();
-                update_delay();
+                //update_delay();
                 display_score(lfsr.sequence_length);
                 elapsed_time = 0;
                 while (elapsed_time<playback_delay);
