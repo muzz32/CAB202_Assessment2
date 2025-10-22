@@ -19,7 +19,7 @@ void buzzer_init(){
     tops[0] = 9387;
     tops[1] = 11163;
     tops[2] = 7032;
-    tops[3] = 2634;
+    tops[3] = 18774;
 }
 
 void set_buzzer(uint8_t index){
