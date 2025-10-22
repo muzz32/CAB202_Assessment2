@@ -25,7 +25,7 @@
 //     FAIL,
 //     RESET    
 // }game_state;
-
+uint8_t button_is_released = 0;
 uint8_t curr_button_state, prev_button_state = 0xFF;
 uint8_t button_change, button_release, button_input = 0;
 uint8_t input, curr_seq;
@@ -81,13 +81,18 @@ int main(void){
             }
             break;
         case WAIT_RELEASE:
-            // if(button_release){
-            //     outputs_off();  
-            //     state=HANDLE_INPUT; 
-            // }
-            if(elapsed_time >= (playback_delay>>1) && button_release){
-                outputs_off();  
-                state=HANDLE_INPUT; 
+
+            if(button_is_released && elapsed_time >= (playback_delay>>1)){
+                outputs_off();
+                state = HANDLE_INPUT;
+                button_is_released = 0;
+            }
+            else if (button_release && elapsed_time >= (playback_delay>>1)) {
+                outputs_off();
+                state = HANDLE_INPUT;
+            }
+            else if (button_release && elapsed_time < (playback_delay>>1)){
+                button_is_released = 1;
             }
             break;
         case HANDLE_INPUT:

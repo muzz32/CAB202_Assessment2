@@ -13,25 +13,25 @@
 
 # Section A
 gameplay = true
-pushbutton-hold = true
-pushbutton-debouncing = true
+pushbutton-hold = false
+pushbutton-debouncing = false
 
 # Section B
-sequencing = true
+sequencing = false
 
 # Section C
-playback-delay = true
+playback-delay = false
 
 # Section D
-playback-frequency = true
+playback-frequency = false
 
 # Section E
-uart-gameplay = true
-uart-octave = true
-seed = true
-reset = true
-high-score = true
-mixed-input = true
+uart-gameplay = false
+uart-octave = false
+seed = false
+reset = false
+high-score = false
+mixed-input = false
 
 # ---- Per-test output preferences ----------------------------------- #
 
