@@ -54,6 +54,7 @@ int main(void){
             }
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
+            update_delay();
             state = DISPLAY_ON;
             break;
         case DISPLAY_ON:
