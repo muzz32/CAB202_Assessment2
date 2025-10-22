@@ -112,6 +112,7 @@ int main(void){
             if (elapsed_time >= playback_delay)
             {
                 outputs_off();
+                elapsed_time = 0;
                 reset_lfsr(&lfsr);
                 state = PROGRESS;
             }
@@ -120,6 +121,7 @@ int main(void){
         case FAIL:
             if(elapsed_time >= playback_delay){
                 outputs_off();
+                elapsed_time = 0;
                 //update_delay();
                 display_score(lfsr.sequence_length);
                 elapsed_time = 0;
