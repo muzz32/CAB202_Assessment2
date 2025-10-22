@@ -31,6 +31,7 @@ uint8_t button_change, button_release, button_input = 0;
 uint8_t input, curr_seq;
 uint32_t new_seed;
 LFSR lfsr;
+uint8_t randnum, display_index = 0;
 volatile char hex_seed[9];  
 
 volatile game_state state = PROGRESS;
@@ -53,12 +54,28 @@ int main(void){
             }
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
-            state = DISPLAY;
+            state = DISPLAY_ON;
             break;
-        case DISPLAY:
-            play_sequence();
-            reset_lfsr(&lfsr);
-            state = WAIT_INPUT;
+        case DISPLAY_ON:
+            if(display_index == lfsr.sequence_length){
+                reset_lfsr(&lfsr);
+                display_index = 0;
+                state = WAIT_INPUT;
+            }
+            else if (elapsed_time >= (playback_delay>>1)){
+                randnum = step(&lfsr);
+                set_outputs(randnum);
+                state = DISPLAY_OFF;
+            }
+            break;
+        case DISPLAY_OFF:
+            if (elapsed_time >= (playback_delay>>1))
+            {
+                outputs_off();
+                elapsed_time = 0;
+                display_index++;
+                state = DISPLAY_ON;
+            }
             break;
         case WAIT_INPUT:
             if(button_input){
@@ -167,7 +184,6 @@ void update_buttons(){
 
 void play_sequence(){
     uint8_t rand;
-    update_delay();
     for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
         rand = step(&lfsr);
         
@@ -200,7 +216,8 @@ void set_outputs(uint8_t index){
         set_display(DISP_OFF, DISP_OFF);
         break;
     }
-    set_buzzer(index);
+    //set_buzzer(index);
+    elapsed_time = 0;
 }
 
 void outputs_off(){

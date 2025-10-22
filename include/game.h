@@ -8,7 +8,8 @@ void init_sys();
 
 typedef enum {
     PROGRESS,
-    DISPLAY,
+    DISPLAY_ON,
+    DISPLAY_OFF,
     WAIT_INPUT,
     WAIT_RELEASE,
     HANDLE_INPUT,
