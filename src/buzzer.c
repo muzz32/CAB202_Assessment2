@@ -11,9 +11,9 @@
 // E_HIGH 9387
 // C_SHARP 11163
 // A 7032
-// E_LOW 2634
+// E_LOW 18774
 
-static uint32_t tops[4] = {9387, 11163, 7032, 2634};
+static uint32_t tops[4] = {9387, 11163, 7032, 18774};
 
 void buzzer_init(){
     tops[0] = 9387;
