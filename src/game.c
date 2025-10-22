@@ -168,8 +168,8 @@ void play_sequence(){
         elapsed_time = 0;  
         while (elapsed_time<(playback_delay>>1));
         outputs_off();
-        elapsed_time = 0;  
-        while (elapsed_time < (playback_delay>>1));
+        // elapsed_time = 0;  
+        // while (elapsed_time < (playback_delay>>1));
     }
 }
 
