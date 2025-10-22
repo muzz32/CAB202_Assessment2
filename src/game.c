@@ -54,8 +54,10 @@ int main(void){
             }
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
-            update_delay();
-            state = DISPLAY_ON;
+            //update_delay();
+            randnum = step(&lfsr);  
+            set_outputs(randnum);
+            state = DISPLAY_OFF;
             break;
         case DISPLAY_ON:
             if(display_index == lfsr.sequence_length){
@@ -64,7 +66,7 @@ int main(void){
                 state = WAIT_INPUT;
             }
             else if (elapsed_time >= (playback_delay>>1)){
-                randnum = step(&lfsr);
+                randnum = step(&lfsr);  
                 set_outputs(randnum);
                 state = DISPLAY_OFF;
             }
@@ -217,7 +219,7 @@ void set_outputs(uint8_t index){
         set_display(DISP_OFF, DISP_OFF);
         break;
     }
-    set_buzzer(index);
+    //set_buzzer(index);
     elapsed_time = 0;
 }
 
