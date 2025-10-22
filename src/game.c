@@ -219,7 +219,7 @@ void set_outputs(uint8_t index){
         set_display(DISP_OFF, DISP_OFF);
         break;
     }
-    //set_buzzer(index);
+    set_buzzer(index);
     elapsed_time = 0;
 }
 
