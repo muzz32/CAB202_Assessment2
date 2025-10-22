@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-volatile uint8_t button_debounced = 0xFF;
+volatile uint8_t button_debounced = 0x00;
 
 void button_init(){
     PORTA.PIN4CTRL = PORT_PULLUPEN_bm;

@@ -27,7 +27,7 @@
 // }game_state;
 
 uint8_t curr_button_state, prev_button_state = 0xFF;
-uint8_t button_change, button_input, button_release = 0;
+uint8_t button_change, button_release, button_input = 0;
 uint8_t input, curr_seq;
 uint32_t new_seed;
 LFSR lfsr;
@@ -154,8 +154,8 @@ void update_buttons(){
     prev_button_state = curr_button_state;
     curr_button_state = button_debounced;
     button_change = curr_button_state ^ prev_button_state;
-    button_release =  button_change & curr_button_state;
     button_input = button_change & prev_button_state; 
+    button_release =  button_change & curr_button_state;
 }
 
 void play_sequence(){
