@@ -81,7 +81,11 @@ int main(void){
             }
             break;
         case WAIT_RELEASE:
-            if(elapsed_time >= (playback_delay>>1) || button_release){
+            // if(button_release){
+            //     outputs_off();  
+            //     state=HANDLE_INPUT; 
+            // }
+            if(elapsed_time >= (playback_delay>>1) && button_release){
                 outputs_off();  
                 state=HANDLE_INPUT; 
             }
@@ -168,8 +172,8 @@ void play_sequence(){
         elapsed_time = 0;  
         while (elapsed_time<(playback_delay>>1));
         outputs_off();
-        // elapsed_time = 0;  
-        // while (elapsed_time < (playback_delay>>1));
+        elapsed_time = 0;  
+        while (elapsed_time < (playback_delay>>1));
     }
 }
 
