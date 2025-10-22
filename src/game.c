@@ -154,8 +154,8 @@ void update_buttons(){
     prev_button_state = curr_button_state;
     curr_button_state = button_debounced;
     button_change = curr_button_state ^ prev_button_state;
-    button_input =  button_change & curr_button_state;
-    button_release = button_change & prev_button_state; 
+    button_release =  button_change & curr_button_state;
+    button_input = button_change & prev_button_state; 
 }
 
 void play_sequence(){
