@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdlib.h>
 
 #include "sequence.h"
 #include "button.h"
@@ -28,8 +29,9 @@
 uint8_t curr_button_state, prev_button_state = 0xFF;
 uint8_t button_change, button_input, button_release = 0;
 uint8_t input, curr_seq;
-
-volatile LFSR lfsr;
+uint32_t new_seed;
+LFSR lfsr;
+volatile char hex_seed[9];  
 
 volatile game_state state = PROGRESS;
 
@@ -134,6 +136,10 @@ int main(void){
             lfsr_init(&lfsr);
             outputs_off();
             state = PROGRESS;
+            break;
+        case SEED:
+            new_seed = strtoul((const char*)hex_seed, NULL, 16);
+            lfsr.seed = new_seed;
         default:
             state = RESET;
             break;

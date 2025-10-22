@@ -65,7 +65,7 @@ ISR(USART0_RXC_vect){
         if (seed_index == 8)
         {
             if(valid){
-                //lfsr.seed = strtol(hex_string, NULL, 16);
+                state = SEED;
             } 
             getting_seed = 0;
             seed_index = 0;
@@ -82,7 +82,7 @@ ISR(USART0_RXC_vect){
             if(temp_valid){
                 if((!valid && !seed_index) || (valid && seed_index)){ // Add only if the 
                     valid = 1;
-                    hex_string[seed_index] = char_recieved;
+                    hex_seed[seed_index] = char_recieved;
                 }
             }
             else{
