@@ -31,6 +31,7 @@ uint8_t button_change, button_release, button_input = 0;
 uint8_t input, curr_seq;
 uint32_t new_seed;
 LFSR lfsr;
+uint8_t success_delay = 0;
 volatile char hex_seed[9];  
 
 volatile game_state state = PROGRESS;
@@ -102,6 +103,7 @@ int main(void){
                     update_delay();
                     set_display(SUCCESS_PATTERN, SUCCESS_PATTERN);
                     elapsed_time = 0;
+                    success_delay = playback_delay;
                     state = SUCCESS;
                 }
                 else if(lfsr.sequence_index < lfsr.sequence_length){
@@ -116,7 +118,7 @@ int main(void){
             }                        
             break;
         case SUCCESS:
-            if (elapsed_time >= playback_delay)
+            if (elapsed_time >= success_delay)
             {
                 outputs_off();
                 //elapsed_time = 0;
