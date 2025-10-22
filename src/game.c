@@ -43,6 +43,7 @@ int main(void){
 
     while (1)
     {
+        update_delay();
         update_buttons();
         switch (state)
         {
