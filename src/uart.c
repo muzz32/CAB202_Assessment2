@@ -17,7 +17,7 @@ uint8_t getting_seed;
 uint8_t seed_index;
 volatile uint8_t seed_ready;
 uint8_t get_seed(uint8_t seed_index, char char_input);
-volatile char hex_seed[8]; 
+volatile char hex_seed[9]; 
 void uart_init(void)
 {
     PORTB.DIRSET = PIN2_bm;
@@ -90,14 +90,15 @@ ISR(USART0_RXC_vect){
     uint8_t char_recieved = USART0.RXDATAL;
 
     if(getting_seed){
-        if (seed_index < 7)
+        if (seed_index < 8)
         {
             get_seed(seed_index, char_recieved);
             seed_index++;
         }
-        else if (seed_index == 7){
+        else if (seed_index == 8){
             uint8_t seed_status = get_seed(seed_index, char_recieved);
             if (seed_status){
+                hex_seed[8]= '\0';
                 seed_ready = 1;
                 printf("seeddone");
                 state = SEED;
