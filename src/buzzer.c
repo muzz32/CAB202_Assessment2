@@ -15,11 +15,14 @@
 
 static uint32_t tops[4] = {9387, 11163, 7032, 18774};
 
+uint8_t ocatve_change;
+
 void buzzer_init(){
     tops[0] = 9387;
     tops[1] = 11163;
     tops[2] = 7032;
     tops[3] = 18774;
+    ocatve_change = 0;
 }
 
 void set_buzzer(uint8_t index){

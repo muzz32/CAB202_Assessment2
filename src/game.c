@@ -100,6 +100,14 @@ int main(void){
                 state = WAIT_RELEASE;
                 button_is_released = 0;
             }
+            else if(uart_input_recieved && (uart_input >= 0 || uart_input <= 3)){
+                input = uart_input;
+                set_outputs(input);
+                elapsed_time = 0;  
+                state = WAIT_RELEASE;
+                uart_input_recieved = 0;
+                button_is_released = 1; //Skip button check and go straight to time check
+            }
             break;
         case WAIT_RELEASE:
             if(!button_is_released){
