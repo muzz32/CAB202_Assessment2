@@ -50,7 +50,9 @@ int main(void){
         {
         case PROGRESS:
             if(lfsr.seed){
+                printf("\nnew state");
                 lfsr.state = lfsr.seed;
+                printf("%08lx", lfsr.state);
             }
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
@@ -176,9 +178,11 @@ int main(void){
             state = PROGRESS;
             break;
         case SEED:
+            printf("seed state");
             if(seed_ready){
                 new_seed = strtoul((const char*)hex_seed, NULL, 16);
                 lfsr.seed = new_seed;
+                printf("%08lx", lfsr.seed);
             }
             state = PROGRESS;
             break;
