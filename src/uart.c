@@ -154,6 +154,7 @@ ISR(USART0_RXC_vect){
             case SEED_2:
                 getting_seed = 1;
                 printf("gettingseed\n");
+                break;
             default:
                 break;
         }

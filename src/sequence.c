@@ -15,7 +15,6 @@ typedef struct{
     uint32_t seed;
 }LFSR;
 
-
 uint8_t step(LFSR *lfsr){
     uint8_t lsb = lfsr->state & 1;
     lfsr->state >>= 1;
