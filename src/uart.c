@@ -72,14 +72,13 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
         temp_valid = 0;
     }
 
-    if ((temp_valid && (!valid && !seed_index)) || (temp_valid && (valid && seed_index)))
-    {
+    if(!seed_index && temp_valid){
         valid = 1;
     }
-    else if (!temp_valid && valid){
-        valid = 0;
+    else{
+        valid &= temp_valid;
     }
-
+    
     hex_seed[seed_index] = char_input;
     printf("%c\n", char_input);
     return valid;
