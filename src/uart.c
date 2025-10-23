@@ -106,6 +106,7 @@ ISR(USART0_RXC_vect){
                 seed_ready = 0;
             }
             getting_seed = 0;
+            seed_index = 0;
         }
     }
     else{
