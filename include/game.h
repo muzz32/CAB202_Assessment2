@@ -24,6 +24,7 @@ typedef enum {
 } game_state;
 
 extern volatile game_state state;
+extern volatile game_state pre_seed_state;
 //extern volatile LFSR lfsr;
  
 extern volatile uint8_t seed_ready;   // Flag when seed is complete

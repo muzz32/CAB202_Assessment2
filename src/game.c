@@ -35,6 +35,7 @@ uint8_t randnum, display_index = 0;
 //volatile char hex_seed[9];  
 
 volatile game_state state = PROGRESS;
+volatile game_state pre_seed_state;
 
 int main(void){
 
@@ -53,6 +54,7 @@ int main(void){
                 printf("\nnew state");
                 lfsr.state = lfsr.seed;
                 printf("%08lx", lfsr.state);
+                lfsr.seed = 0;
             }
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
@@ -184,7 +186,7 @@ int main(void){
                 lfsr.seed = new_seed;
                 printf("%08lx", lfsr.seed);
             }
-            state = PROGRESS;
+            state = pre_seed_state;
             break;
         default:
             state = RESET;
