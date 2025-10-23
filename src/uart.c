@@ -72,7 +72,7 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
         temp_valid = 0;
     }
 
-    if (temp_valid && (!valid && !seed_index))
+    if ((temp_valid && (!valid && !seed_index)) || (temp_valid && (valid && seed_index)))
     {
         valid = 1;
     }
