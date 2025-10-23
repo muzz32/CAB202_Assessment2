@@ -181,6 +181,7 @@ int main(void){
                 lfsr.seed = new_seed;
             }
             state = PROGRESS;
+            break;
         default:
             state = RESET;
             break;
