@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include <stdint.h>
 //#include "sequence.h"
 void update_buttons();
@@ -24,3 +27,5 @@ extern volatile game_state state;
 //extern volatile LFSR lfsr;
 extern volatile char hex_seed[9];  
 extern volatile uint8_t seed_ready;   // Flag when seed is complete
+
+#endif

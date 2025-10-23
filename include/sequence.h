@@ -1,3 +1,6 @@
+#ifndef SEQUENCE_H
+#define SEQUENCE_H
+
 #include <stdint.h>
 
 typedef struct{
@@ -13,3 +16,5 @@ void lfsr_init(LFSR *lfsr);
 uint8_t step(LFSR *lfsr);
 
 void reset_lfsr(LFSR *lfsr);
+
+#endif

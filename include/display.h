@@ -1,3 +1,6 @@
+#ifndef DISPLAY_H
+#define DISPLAY_H
+
 #include <stdint.h>
 #define DISP_LHS        0b10000000
 #define DISP_OFF        0b01111111
@@ -23,3 +26,5 @@ void set_display(uint8_t left, uint8_t right);
 void display_score(uint8_t score);
 void disp_init();
 void swap_digit();
+
+#endif

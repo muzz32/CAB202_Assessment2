@@ -1,3 +1,6 @@
+#ifndef UART_H
+#define UART_H
+
 #include <avr/io.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -35,3 +38,5 @@ static const char valid_hex[17] = {'0','1', '2', '3', '4', '5', '6', '7', '8', '
 
 extern volatile uint8_t uart_input_recieved;
 extern volatile uint8_t uart_input;
+
+#endif
