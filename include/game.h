@@ -3,11 +3,6 @@
 
 #include <stdint.h>
 //#include "sequence.h"
-void update_buttons();
-void play_sequence();
-void set_outputs(uint8_t index);
-void outputs_off();
-void init_sys();
 
 typedef enum {
     PROGRESS,
@@ -20,8 +15,21 @@ typedef enum {
     SUCCESS,
     FAIL,
     RESET,
-    SEED 
+    SEED,
+    GET_HIGHSCORE
 } game_state;
+
+typedef struct{
+    char name[20];
+    uint16_t score;
+}USER;
+
+void game_init(USER *highscore_table);
+void update_buttons();
+void set_outputs(uint8_t index);
+void outputs_off();
+void init_sys();
+void check_scores(USER *highscore_table, uint16_t score);
 
 extern volatile game_state state;
 extern volatile game_state pre_seed_state;

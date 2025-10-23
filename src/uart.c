@@ -18,6 +18,8 @@ uint8_t seed_index;
 volatile uint8_t seed_ready;
 uint8_t get_seed(uint8_t seed_index, char char_input);
 volatile char hex_seed[9]; 
+uint8_t name_index;
+
 void uart_init(void)
 {
     PORTB.DIRSET = PIN2_bm;
@@ -31,6 +33,7 @@ void uart_init(void)
     getting_seed = 0;
     seed_index = 0;
     seed_ready = 0;
+    name_index = 0;
 }
 
 char uart_getc(void)
@@ -80,15 +83,24 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
     }
 
     hex_seed[seed_index] = char_input;
-    printf("%c\n", char_input);
+    //printf("%c\n", char_input);
     return valid;
+}
+
+uint8_t get_name(uint8_t name_index, char char_input){
+
 }
 
 ISR(USART0_RXC_vect){
 
     uint8_t char_recieved = USART0.RXDATAL;
-
-    if(getting_seed){
+    if (state=GET_HIGHSCORE){
+        if(name_index < 19 && char_recieved != "\r\n"){
+            get_name(name_index, char_recieved);
+            name_index++;
+        }
+    }
+    else if(getting_seed){
         if (seed_index < 7)
         {
             get_seed(seed_index, char_recieved);
@@ -99,7 +111,7 @@ ISR(USART0_RXC_vect){
             if (seed_status){
                 hex_seed[8]= '\0';
                 seed_ready = 1;
-                printf("seeddone");
+                //printf("seeddone");
                 pre_seed_state = state;
                 state = SEED;
             }
@@ -155,6 +167,7 @@ ISR(USART0_RXC_vect){
             case SEED_1:
             case SEED_2:
                 getting_seed = 1;
+                seed_index = 0;
                 //printf("gettingseed\n");
                 break;
             default:

@@ -14,6 +14,8 @@
 #include "uart.h"
 #include "delay.h"
 
+#define TABLE_LENGTH 5
+
 // typedef enum{
 //     PROGRESS,
 //     DISPLAY,
@@ -36,6 +38,13 @@ uint8_t randnum, display_index = 0;
 
 volatile game_state state = PROGRESS;
 volatile game_state pre_seed_state;
+
+USER highscore_table[TABLE_LENGTH];
+USER empty_user = {
+    .name = "\0",
+    .score = 0
+};
+
 
 int main(void){
 
@@ -172,9 +181,17 @@ int main(void){
                 outputs_off(); 
                 elapsed_time = 0;
                 while (elapsed_time<playback_delay);
-                lfsr.sequence_length = 0;
-                lfsr.start_state = lfsr.state;
-                state = PROGRESS;
+
+                uint8_t score_check_res = check_scores(&highscore_table, lfsr.sequence_length);
+                if (score_check_res)
+                {
+                    state = GET_HIGHSCORE;
+                }
+                else{
+                    lfsr.sequence_length = 0;
+                    lfsr.start_state = lfsr.state;
+                    state = PROGRESS;
+                }
             }
             break;
         case RESET:
@@ -192,6 +209,9 @@ int main(void){
             }
             state = pre_seed_state;
             break;
+        case GET_HIGHSCORE:
+            printf("Enter name: ");
+            break;
         default:
             state = RESET;
             break;
@@ -207,18 +227,26 @@ void update_buttons(){
     button_release =  button_change & curr_button_state;
 }
 
-void play_sequence(){
-    uint8_t rand;
-    for(uint8_t i = 0; i < lfsr.sequence_length; i++){       
-        rand = step(&lfsr);
-        
-        set_outputs(rand);
-        elapsed_time = 0;  
-        while (elapsed_time<(playback_delay>>1));
-        outputs_off();
-        elapsed_time = 0;  
-        while (elapsed_time < (playback_delay>>1));
+void game_init(USER *highscore_table) {
+    for(uint8_t i =0; i < (TABLE_LENGTH-1); i++){
+        highscore_table[i] = empty_user;
     }
+    button_is_released = 0;
+    curr_button_state, prev_button_state = 0xFF;
+}
+
+uint8_t check_scores(USER *highscore_table, uint16_t score){
+    uint8_t highscore_pos=0;
+    for(uint8_t i = 1; i < TABLE_LENGTH; i++){
+        if(highscore_table[i-1].score < score){
+            highscore_pos = i;
+            continue;
+        }
+        else if (highscore_pos){
+            break;
+        }
+    }
+    return highscore_pos;
 }
 
 void set_outputs(uint8_t index){
@@ -250,8 +278,10 @@ void outputs_off(){
     set_display(DISP_OFF, DISP_OFF);
 }
 
+
 void init_sys(){
     cli();
+    game_init(&highscore_table);
     lfsr_init(&lfsr);
     disp_init();
     timer_init();
