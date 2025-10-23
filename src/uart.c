@@ -81,6 +81,7 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
     }
 
     hex_seed[seed_index] = char_input;
+    printf("%c\n", char_input);
     return valid;
 }
 
@@ -98,6 +99,7 @@ ISR(USART0_RXC_vect){
             uint8_t seed_status = get_seed(seed_index, char_recieved);
             if (seed_status){
                 seed_ready = 1;
+                printf("seeddone");
                 state = SEED;
             }
             else{
@@ -151,7 +153,7 @@ ISR(USART0_RXC_vect){
             case SEED_1:
             case SEED_2:
                 getting_seed = 1;
-                printf("sed");
+                printf("gettingseed\n");
             default:
                 break;
         }
