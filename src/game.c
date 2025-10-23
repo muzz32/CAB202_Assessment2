@@ -32,7 +32,7 @@ uint8_t input, curr_seq;
 uint32_t new_seed;
 LFSR lfsr;
 uint8_t randnum, display_index = 0;
-volatile char hex_seed[9];  
+//volatile char hex_seed[9];  
 
 volatile game_state state = PROGRESS;
 
@@ -100,7 +100,7 @@ int main(void){
                 state = WAIT_RELEASE;
                 button_is_released = 0;
             }
-            else if(uart_input_recieved && (uart_input >= 0 || uart_input <= 3)){
+            else if(uart_input_recieved && (uart_input >= 0 && uart_input <= 3)){
                 input = uart_input;
                 set_outputs(input);
                 elapsed_time = 0;  
@@ -176,8 +176,11 @@ int main(void){
             state = PROGRESS;
             break;
         case SEED:
-            new_seed = strtoul((const char*)hex_seed, NULL, 16);
-            lfsr.seed = new_seed;
+            if(seed_ready){
+                new_seed = strtoul((const char*)hex_seed, NULL, 16);
+                lfsr.seed = new_seed;
+            }
+            state = PROGRESS;
         default:
             state = RESET;
             break;

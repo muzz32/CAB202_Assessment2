@@ -13,7 +13,11 @@ static int stdio_getchar(FILE *stream);
 static FILE stdio = FDEV_SETUP_STREAM(stdio_putchar, stdio_getchar, _FDEV_SETUP_RW);
 volatile uint8_t uart_input_recieved;
 volatile uint8_t uart_input;
-
+uint8_t getting_seed;
+uint8_t seed_index;
+volatile uint8_t seed_ready;
+uint8_t get_seed(uint8_t seed_index, char char_input);
+volatile char hex_seed[8]; 
 void uart_init(void)
 {
     PORTB.DIRSET = PIN2_bm;
@@ -24,6 +28,9 @@ void uart_init(void)
     stdin = &stdio;
     uart_input_recieved = 0;
     uart_input = -1; //Initialised but not a valid value to avoid 
+    getting_seed = 0;
+    seed_index = 0;
+    seed_ready = 0;
 }
 
 char uart_getc(void)
@@ -55,44 +62,48 @@ static int stdio_getchar(FILE *stream) {
     return uart_getc();
 }
 
+uint8_t get_seed(uint8_t seed_index, char char_input){
+    uint8_t temp_valid = 0;
+    static uint8_t valid;
+    if((char_input >= '0' && char_input <= '9') || (char_input >= 'a' && char_input <= 'f')){
+        temp_valid = 1;
+    }
+    else{
+        temp_valid = 0;
+    }
 
+    if (temp_valid && (!valid && !seed_index))
+    {
+        valid = 1;
+    }
+    else if (!temp_valid && valid){
+        valid = 0;
+    }
+
+    hex_seed[seed_index] = char_input;
+    return valid;
+}
 
 ISR(USART0_RXC_vect){
-    static uint8_t getting_seed = 0;
-    static uint8_t seed_index = 0;
 
     uint8_t char_recieved = USART0.RXDATAL;
 
     if(getting_seed){
-        static char hex_string[8];
-        static uint8_t valid = 0;
-        if (seed_index == 8)
+        if (seed_index < 7)
         {
-            if(valid){
+            get_seed(seed_index, char_recieved);
+            seed_index++;
+        }
+        else if (seed_index == 7){
+            uint8_t seed_status = get_seed(seed_index, char_recieved);
+            if (seed_status){
+                seed_ready = 1;
                 state = SEED;
-            } 
-            getting_seed = 0;
-            seed_index = 0;
-            valid = 0;
-        } 
-        else{
-            uint8_t temp_valid = 0;
-            for(uint8_t i = 0; i < 15; i++){
-                if (char_recieved == valid_hex[i])
-                {
-                    temp_valid = 1;
-                }
-            }
-            if(temp_valid){
-                if((!valid && !seed_index) || (valid && seed_index)){ // Add only if the 
-                    valid = 1;
-                    hex_seed[seed_index] = char_recieved;
-                }
             }
             else{
-                valid = 0;
+                seed_ready = 0;
             }
-            seed_index++;
+            getting_seed = 0;
         }
     }
     else{
