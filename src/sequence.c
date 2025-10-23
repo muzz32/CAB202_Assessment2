@@ -10,8 +10,8 @@ uint32_t sid = 0x11958774;
 typedef struct{
     uint32_t state;
     uint32_t start_state;
-    uint32_t sequence_length;
-    uint32_t sequence_index;
+    uint16_t sequence_length;
+    uint16_t sequence_index;
     uint32_t seed;
 }LFSR;
 

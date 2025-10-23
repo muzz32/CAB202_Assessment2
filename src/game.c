@@ -51,9 +51,9 @@ int main(void){
         {
         case PROGRESS:
             if(lfsr.seed){
-                printf("\nnew state");
+                //printf("\nnew state");
                 lfsr.state = lfsr.seed;
-                printf("%08lx", lfsr.state);
+                //printf("%08lx", lfsr.state);
                 lfsr.seed = 0;
             }
             lfsr.sequence_length++;
@@ -133,6 +133,8 @@ int main(void){
                 if(lfsr.sequence_index == lfsr.sequence_length){
                     update_delay();
                     set_display(SUCCESS_PATTERN, SUCCESS_PATTERN);
+                    printf("SUCCESS\n");
+                    printf("%u\n", lfsr.sequence_length);
                     elapsed_time = 0;
                     state = SUCCESS;
                 }
@@ -143,6 +145,8 @@ int main(void){
             else{
                 update_delay();
                 set_display(FAIL_PATTERN, FAIL_PATTERN);
+                printf("GAME OVER\n");
+                printf("%u\n", lfsr.sequence_length);
                 elapsed_time = 0;
                 state = FAIL;
             }                        
@@ -180,11 +184,11 @@ int main(void){
             state = PROGRESS;
             break;
         case SEED:
-            printf("seed state");
+            //printf("seed state");
             if(seed_ready){
                 new_seed = strtoul((const char*)hex_seed, NULL, 16);
                 lfsr.seed = new_seed;
-                printf("%08lx", lfsr.seed);
+                //printf("%08lx", lfsr.seed);
             }
             state = pre_seed_state;
             break;
