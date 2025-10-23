@@ -95,56 +95,54 @@ ISR(USART0_RXC_vect){
             seed_index++;
         }
     }
-
-    
-
-    switch (char_recieved)
-    {
-        case S1_1:
-        case S1_Q:
-            uart_input = 0;
-            uart_input_recieved = 1;
-            printf("1");
-            break;
-        case S2_2:
-        case S2_W:
-            uart_input = 1;
-            uart_input_recieved = 1;
-            printf("2");
-            break;
-        case S3_3:
-        case S3_E:
-            uart_input = 2;
-            uart_input_recieved = 1;
-            printf("3");
-            break;
-        case S4_4:
-        case S4_R:
-            uart_input = 3;
-            uart_input_recieved = 1;
-            printf("4");
-            break;
-        case INC_FREQ_1:
-        case INC_FREQ_2:
-            increase_octave();
-            printf("inc");
-            break;
-        case DEC_FREQ_1:
-        case DEC_FREQ_2:
-            decrease_octave();
-            printf("dec");
-            break;
-        case RESET_1:
-        case RESET_2:
-            state = RESET;
-            printf("res");
-            break;
-        case SEED_1:
-        case SEED_2:
-            getting_seed = 1;
-            printf("sed");
-        default:
-            break;
+    else{
+        switch (char_recieved)
+        {
+            case S1_1:
+            case S1_Q:
+                uart_input = 0;
+                uart_input_recieved = 1;
+                printf("1");
+                break;
+            case S2_2:
+            case S2_W:
+                uart_input = 1;
+                uart_input_recieved = 1;
+                printf("2");
+                break;
+            case S3_3:
+            case S3_E:
+                uart_input = 2;
+                uart_input_recieved = 1;
+                printf("3");
+                break;
+            case S4_4:
+            case S4_R:
+                uart_input = 3;
+                uart_input_recieved = 1;
+                printf("4");
+                break;
+            case INC_FREQ_1:
+            case INC_FREQ_2:
+                increase_octave();
+                printf("inc");
+                break;
+            case DEC_FREQ_1:
+            case DEC_FREQ_2:
+                decrease_octave();
+                printf("dec");
+                break;
+            case RESET_1:
+            case RESET_2:
+                state = RESET;
+                printf("res");
+                break;
+            case SEED_1:
+            case SEED_2:
+                getting_seed = 1;
+                printf("sed");
+            default:
+                break;
+        }
     }
-
 }
