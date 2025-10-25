@@ -71,7 +71,6 @@ static int stdio_getchar(FILE *stream) {
 }
 
 void print_user_table(USER *table, uint8_t table_length){
-    printf("\n");
     for (uint8_t i = 0; i < table_length; i++)
     {
         if (table[i].score == 0) break;

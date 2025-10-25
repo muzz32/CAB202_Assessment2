@@ -249,6 +249,7 @@ int main(void){
                     }
                     resort_list(new_user, score_check_res, highscore_table);
                     score_check_res = 0;
+                    printf("\n");
                     print_user_table(highscore_table, TABLE_LENGTH);
                     lfsr.sequence_length = 0;
                     lfsr.start_state = lfsr.state;
