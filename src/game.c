@@ -226,6 +226,7 @@ int main(void){
                 print_user_table(highscore_table, TABLE_LENGTH);
                 lfsr.sequence_length = 0;
                 lfsr.start_state = lfsr.state;
+                name_index =0;
                 state = PROGRESS;
             }
             else{
@@ -250,6 +251,7 @@ int main(void){
                     print_user_table(highscore_table, TABLE_LENGTH);
                     lfsr.sequence_length = 0;
                     lfsr.start_state = lfsr.state;
+                    name_index = 0;
                     state = PROGRESS;
                 }
             }
@@ -281,7 +283,7 @@ void game_init(USER *highscore_table) {
 
 uint8_t check_scores(USER *highscore_table, uint16_t score){
     uint8_t highscore_pos=0;
-    for(uint8_t i = 1; i < TABLE_LENGTH; i++){
+    for(uint8_t i = 1; i <= TABLE_LENGTH; i++){
         if(highscore_table[i-1].score < score){
             highscore_pos = i;
             return highscore_pos;
