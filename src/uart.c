@@ -102,27 +102,6 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
     return seed_valid;
 }
 
-// uint8_t get_name(uint8_t name_index, char char_input){
-//     uint8_t temp_valid = 0;
-//     static uint8_t name_valid;
-//     if((char_input >= '0' && char_input <= '9') || (char_input >= 'a' && char_input <= 'f')){
-//         temp_valid = 1;
-//     }
-//     else{
-//         temp_valid = 0;
-//     }
-
-//     if(!seed_index && temp_valid){
-//         name_valid = 1;
-//     }
-//     else{
-//         name_valid &= temp_valid;
-//     }
-
-//     hex_seed[seed_index] = char_input;
-//     //printf("%c\n", char_input);
-//     return name_valid;
-// }
 
 ISR(USART0_RXC_vect){
 

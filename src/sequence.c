@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include "uart.h"
 
 uint32_t mask = 0xE2025CAB;
 uint32_t seq_seed = 0x11958774;
@@ -24,7 +25,19 @@ uint8_t step(LFSR *lfsr){
 }
 
 void reset_lfsr(LFSR *lfsr){
+    if(seed_ready){
+        lfsr->state = seq_seed;
+        seed_ready = 0;
+    }
     lfsr->state = lfsr->start_state;
+}
+
+void set_start_lfsr(LFSR *lfsr){
+    if(seed_ready){
+        lfsr->state = seq_seed;
+        seed_ready = 0;
+    }
+    lfsr->start_state = lfsr->state;
 }
 
 void lfsr_init(LFSR *lfsr){

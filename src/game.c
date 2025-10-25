@@ -39,7 +39,7 @@ uint8_t score_check_res;
 //volatile char hex_seed[9];  
 
 volatile game_state state = PROGRESS;
-volatile game_state pre_seed_state;
+
 
 USER highscore_table[TABLE_LENGTH];
 USER empty_user = {
@@ -195,7 +195,7 @@ int main(void){
                 }
                 else{
                     lfsr.sequence_length = 0;
-                    lfsr.start_state = lfsr.state;
+                    set_start_lfsr(&lfsr);
                     state = PROGRESS;
                 }
             }
@@ -219,7 +219,7 @@ int main(void){
                 name_ready = 0;
                 print_user_table(highscore_table, TABLE_LENGTH);
                 lfsr.sequence_length = 0;
-                lfsr.start_state = lfsr.state;
+                set_start_lfsr(&lfsr);
                 name_index =0;
                 state = PROGRESS;
             }
@@ -244,7 +244,7 @@ int main(void){
                     score_check_res = 0;
                     print_user_table(highscore_table, TABLE_LENGTH);
                     lfsr.sequence_length = 0;
-                    lfsr.start_state = lfsr.state;
+                    set_start_lfsr(&lfsr);
                     name_index = 0;
                     state = PROGRESS;
                 }
