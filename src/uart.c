@@ -111,11 +111,12 @@ ISR(USART0_RXC_vect){
             temp_name[name_index] = '\0';
             name_ready = 1;
         }
-        else if(name_index < 20){
+        else if(name_index < 19){
             temp_name[name_index] = char_recieved;
             name_index++;
-            if(name_index == 20){
-                temp_name[name_index] = char_recieved;
+            if(name_index == 19){
+                temp_name[19] = char_recieved;
+                temp_name[20] = '\0';
                 name_ready = 1;
             }
         }

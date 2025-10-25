@@ -61,13 +61,9 @@ int main(void){
         switch (state)
         {
         case PROGRESS:
-            if(seed_ready){
-                lfsr.state  = seq_seed;
-                lfsr.start_state = lfsr.state;
-                printf("\nnewseed: %#08lX\n", seq_seed);
-                seed_ready = 0;
-            }
-            printf("currseed: %#08lX\n", seq_seed);
+            printf("seq_seed: %#08lX\n", seq_seed);
+            printf("lfsr.state: %#08lX\n", lfsr.state);
+            printf("lfsr.start_state: %#08lX\n", lfsr.start_state);
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
             //update_delay();
@@ -213,7 +209,7 @@ int main(void){
             if(name_ready){
                 USER new_user;
                 strncpy(new_user.name, (const char*)temp_name, name_index);
-                new_user.name[name_index] = '\0';
+                //new_user.name[name_index] = '\0';
                 new_user.score = lfsr.sequence_length;
                 resort_list(new_user, score_check_res, highscore_table);
                 score_check_res = 0;
@@ -221,14 +217,14 @@ int main(void){
                 print_user_table(highscore_table, TABLE_LENGTH);
                 lfsr.sequence_length = 0;
                 set_start_lfsr(&lfsr);
-                name_index =0;
+                name_index = 0;
                 state = PROGRESS;
             }
             else{
-                if (uart_input_recieved)
+                if (name_input_received)
                 {
                     elapsed_time = 0;
-                    uart_input_recieved = 0;
+                    name_input_received = 0;
                 }
                 else if(elapsed_time >= 5000){
                     USER new_user = empty_user;
