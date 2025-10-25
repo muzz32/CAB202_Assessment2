@@ -64,6 +64,7 @@ int main(void){
             if(seed_ready){
                 lfsr.state  = new_seed;
                 lfsr.start_state = lfsr.state;
+                printf("\nnewseed: %#08lX\n", new_seed);
                 seed_ready = 0;
             }
             lfsr.sequence_length++;
