@@ -61,11 +61,10 @@ int main(void){
         switch (state)
         {
         case PROGRESS:
-            if(lfsr.seed){
-                //printf("\nnew state");
-                lfsr.state = lfsr.seed;
-                //printf("%08lx", lfsr.state);
-                lfsr.seed = 0;
+            if(seed_ready){
+                new_seed = strtoul((const char*)hex_seed, NULL, 16);
+                lfsr.state  = new_seed;
+                seed_ready = 0;
             }
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
@@ -180,6 +179,7 @@ int main(void){
                 update_delay();
                 display_score(lfsr.sequence_length);
                 elapsed_time = 0;
+                state = SHOW_SCORE;
                 while (elapsed_time<playback_delay);
                 outputs_off(); 
                 elapsed_time = 0;
@@ -205,15 +205,7 @@ int main(void){
             outputs_off();
             state = PROGRESS;
             break;
-        case SEED:
-            //printf("seed state");
-            if(seed_ready){
-                new_seed = strtoul((const char*)hex_seed, NULL, 16);
-                lfsr.seed = new_seed;
-                seed_ready = 0;
-                //printf("%08lx", lfsr.seed);
-            }
-            state = pre_seed_state;
+        case SHOW_SCORE:
             break;
         case GET_HIGHSCORE:
             if(name_ready){

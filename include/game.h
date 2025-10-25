@@ -15,7 +15,7 @@ typedef enum {
     SUCCESS,
     FAIL,
     RESET,
-    SEED,
+    SHOW_SCORE,
     GET_HIGHSCORE
 } game_state;
 

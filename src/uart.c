@@ -153,9 +153,6 @@ ISR(USART0_RXC_vect){
             if (seed_status){
                 hex_seed[8]= '\0';
                 seed_ready = 1;
-                //printf("seeddone");
-                pre_seed_state = state;
-                state = SEED;
             }
             else{
                 seed_ready = 0;
