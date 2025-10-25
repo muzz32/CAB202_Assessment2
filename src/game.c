@@ -219,6 +219,7 @@ int main(void){
                 USER new_user;
                 strncpy(new_user.name, (const char*)temp_name, name_index);
                 new_user.name[20] = '\0';
+                new_user.score = lfsr.sequence_length;
                 resort_list(new_user, score_check_res, highscore_table);
                 score_check_res = 0;
                 name_ready = 0;
@@ -283,10 +284,7 @@ uint8_t check_scores(USER *highscore_table, uint16_t score){
     for(uint8_t i = 1; i < TABLE_LENGTH; i++){
         if(highscore_table[i-1].score < score){
             highscore_pos = i;
-            continue;
-        }
-        else if (highscore_pos){
-            break;
+            return highscore_pos;
         }
     }
     return highscore_pos;
@@ -299,7 +297,7 @@ void resort_list(USER new_user, uint8_t new_user_place, USER *highscore_table){
     else{
         uint8_t new_user_index = new_user_place - 1;
 
-        for(uint8_t i = 4; i<new_user_index; i--)
+        for(uint8_t i = 4; i>new_user_index; i--)
         {
             highscore_table[i] = highscore_table[i-1];
         }
