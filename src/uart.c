@@ -128,7 +128,6 @@ ISR(USART0_RXC_vect){
     char char_recieved = USART0.RXDATAL;
     //printf("%c", char_recieved);
     if (state == GET_HIGHSCORE){
-        printf("%c", char_recieved);
         if(char_recieved == '\n'){
             temp_name[name_index] = '\0';
             name_ready = 1;
