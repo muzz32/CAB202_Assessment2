@@ -71,6 +71,7 @@ static int stdio_getchar(FILE *stream) {
 }
 
 void print_user_table(USER *table, uint8_t table_length){
+    printf("\n");
     for (uint8_t i = 0; i < table_length; i++)
     {
         if (table[i].score == 0) break;
@@ -126,7 +127,6 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
 ISR(USART0_RXC_vect){
 
     char char_recieved = USART0.RXDATAL;
-    //printf("%c", char_recieved);
     if (state == GET_HIGHSCORE){
         if(char_recieved == '\n'){
             temp_name[name_index] = '\0';
@@ -138,7 +138,6 @@ ISR(USART0_RXC_vect){
             if(name_index == 20){
                 temp_name[name_index] = char_recieved;
                 name_ready = 1;
-                printf("\n");
             }
         }
         name_input_received = 1;
