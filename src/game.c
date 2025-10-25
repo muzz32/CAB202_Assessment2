@@ -219,7 +219,7 @@ int main(void){
             if(name_ready){
                 USER new_user;
                 strncpy(new_user.name, (const char*)temp_name, name_index);
-                new_user.name[20] = '\0';
+                new_user.name[name_index] = '\0';
                 new_user.score = lfsr.sequence_length;
                 resort_list(new_user, score_check_res, highscore_table);
                 score_check_res = 0;
