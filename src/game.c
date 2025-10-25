@@ -131,6 +131,7 @@ int main(void){
             else{
                 if (elapsed_time >= (playback_delay>>1))
                 {
+                    button_is_released = 0;
                     outputs_off();
                     state = HANDLE_INPUT;
                 }
