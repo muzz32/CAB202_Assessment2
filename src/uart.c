@@ -73,7 +73,7 @@ static int stdio_getchar(FILE *stream) {
 void print_user_table(USER *table, uint8_t table_length){
     for (uint8_t i = 0; i < table_length; i++)
     {
-        printf('%s %u\n', table[i].name, table[i].score);
+        printf("%s %u\n", table[i].name, table[i].score);
     }
     
 }
@@ -127,13 +127,20 @@ ISR(USART0_RXC_vect){
     char char_recieved = USART0.RXDATAL;
     //printf("%c", char_recieved);
     if (state == GET_HIGHSCORE){
+        printf("%c", char_recieved);
         if(name_index < 19 && char_recieved != '\n'){
-            temp_name[name_index] = char_recieved;
-            name_index++;
+            if(char_recieved == '\n'){
+                temp_name[name_index] = '\0';
+                name_ready = 1;
+            }
+            else{
+                temp_name[name_index] = char_recieved;
+                name_index++;
+            }
         }
-        else if(char_recieved == '\n'){
-            temp_name[name_index] = '\0';
-
+        else if(name_index == 19){
+            temp_name[20] = '\0';
+            name_ready = 1;
         }
         name_input_received = 1;
     }
