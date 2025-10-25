@@ -152,6 +152,7 @@ ISR(USART0_RXC_vect){
             uint8_t seed_status = get_seed(seed_index, char_recieved);
             if (seed_status){
                 hex_seed[8]= '\0';
+                seq_seed = strtoul((const char*)hex_seed, NULL, 16);
                 seed_ready = 1;
             }
             else{

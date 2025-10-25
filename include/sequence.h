@@ -8,7 +8,6 @@ typedef struct{
     uint32_t start_state;
     uint16_t sequence_length;
     uint16_t sequence_index;
-    uint32_t seed;
 }LFSR;
 
 void lfsr_init(LFSR *lfsr);
@@ -16,5 +15,7 @@ void lfsr_init(LFSR *lfsr);
 uint8_t step(LFSR *lfsr);
 
 void reset_lfsr(LFSR *lfsr);
+
+extern uint32_t seq_seed;
 
 #endif

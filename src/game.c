@@ -62,8 +62,8 @@ int main(void){
         {
         case PROGRESS:
             if(seed_ready){
-                new_seed = strtoul((const char*)hex_seed, NULL, 16);
                 lfsr.state  = new_seed;
+                lfsr.start_state = lfsr.state;
                 seed_ready = 0;
             }
             lfsr.sequence_length++;
