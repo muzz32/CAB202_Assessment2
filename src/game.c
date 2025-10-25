@@ -62,11 +62,12 @@ int main(void){
         {
         case PROGRESS:
             if(seed_ready){
-                lfsr.state  = new_seed;
+                lfsr.state  = seq_seed;
                 lfsr.start_state = lfsr.state;
-                printf("\nnewseed: %#08lX\n", new_seed);
+                printf("\nnewseed: %#08lX\n", seq_seed);
                 seed_ready = 0;
             }
+            printf("currseed: %#08lX\n", seq_seed);
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
             //update_delay();
