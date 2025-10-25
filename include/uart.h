@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "game.h"
 
 #define S1_1 '1'
 #define S1_Q 'q'
@@ -33,12 +34,16 @@ void uart_init(void);
 char uart_getc(void);
 void uart_putc(char c);
 void uart_puts(const char* c);
-
+void print_user_table(USER *table, uint8_t table_length);
 //static const char valid_hex[17] = {'0','1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g'};
 
 extern volatile uint8_t uart_input_recieved;
 extern volatile uint8_t uart_input;
 extern volatile uint8_t seed_ready;
 extern volatile char hex_seed[9]; 
+extern volatile char temp_name[21];
+extern volatile uint8_t name_ready;
+extern volatile uint8_t name_input_received;
+extern volatile uint8_t name_index;
 
 #endif

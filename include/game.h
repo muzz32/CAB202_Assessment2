@@ -20,7 +20,7 @@ typedef enum {
 } game_state;
 
 typedef struct{
-    char name[20];
+    char name[21];
     uint16_t score;
 }USER;
 
@@ -29,12 +29,12 @@ void update_buttons();
 void set_outputs(uint8_t index);
 void outputs_off();
 void init_sys();
-void check_scores(USER *highscore_table, uint16_t score);
-
+uint8_t check_scores(USER *highscore_table, uint16_t score);
+void resort_list(USER new_user, uint8_t new_user_place, USER *highscore_table);
 extern volatile game_state state;
 extern volatile game_state pre_seed_state;
 //extern volatile LFSR lfsr;
  
-extern volatile uint8_t seed_ready;   // Flag when seed is complete
+//extern volatile uint8_t seed_ready;   // Flag when seed is complete
 
 #endif

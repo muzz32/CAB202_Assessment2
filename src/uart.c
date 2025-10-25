@@ -18,7 +18,10 @@ uint8_t seed_index;
 volatile uint8_t seed_ready;
 uint8_t get_seed(uint8_t seed_index, char char_input);
 volatile char hex_seed[9]; 
-uint8_t name_index;
+volatile uint8_t name_index;
+volatile char temp_name[21];
+volatile uint8_t name_ready;
+volatile uint8_t name_input_received;
 
 void uart_init(void)
 {
@@ -34,6 +37,8 @@ void uart_init(void)
     seed_index = 0;
     seed_ready = 0;
     name_index = 0;
+    name_ready = 0;
+    name_input_received = 0;
 }
 
 char uart_getc(void)
@@ -65,9 +70,17 @@ static int stdio_getchar(FILE *stream) {
     return uart_getc();
 }
 
+void print_user_table(USER *table, uint8_t table_length){
+    for (uint8_t i = 0; i < table_length; i++)
+    {
+        printf('%s %u\n', table[i].name, table[i].score);
+    }
+    
+}
+
 uint8_t get_seed(uint8_t seed_index, char char_input){
     uint8_t temp_valid = 0;
-    static uint8_t valid;
+    static uint8_t seed_valid;
     if((char_input >= '0' && char_input <= '9') || (char_input >= 'a' && char_input <= 'f')){
         temp_valid = 1;
     }
@@ -76,29 +89,53 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
     }
 
     if(!seed_index && temp_valid){
-        valid = 1;
+        seed_valid = 1;
     }
     else{
-        valid &= temp_valid;
+        seed_valid &= temp_valid;
     }
 
     hex_seed[seed_index] = char_input;
     //printf("%c\n", char_input);
-    return valid;
+    return seed_valid;
 }
 
-uint8_t get_name(uint8_t name_index, char char_input){
+// uint8_t get_name(uint8_t name_index, char char_input){
+//     uint8_t temp_valid = 0;
+//     static uint8_t name_valid;
+//     if((char_input >= '0' && char_input <= '9') || (char_input >= 'a' && char_input <= 'f')){
+//         temp_valid = 1;
+//     }
+//     else{
+//         temp_valid = 0;
+//     }
 
-}
+//     if(!seed_index && temp_valid){
+//         name_valid = 1;
+//     }
+//     else{
+//         name_valid &= temp_valid;
+//     }
+
+//     hex_seed[seed_index] = char_input;
+//     //printf("%c\n", char_input);
+//     return name_valid;
+// }
 
 ISR(USART0_RXC_vect){
 
-    uint8_t char_recieved = USART0.RXDATAL;
-    if (state=GET_HIGHSCORE){
-        if(name_index < 19 && char_recieved != "\r\n"){
-            get_name(name_index, char_recieved);
+    char char_recieved = USART0.RXDATAL;
+    //printf("%c", char_recieved);
+    if (state == GET_HIGHSCORE){
+        if(name_index < 19 && char_recieved != '\n'){
+            temp_name[name_index] = char_recieved;
             name_index++;
         }
+        else if(char_recieved == '\n'){
+            temp_name[name_index] = '\0';
+
+        }
+        name_input_received = 1;
     }
     else if(getting_seed){
         if (seed_index < 7)
@@ -174,4 +211,5 @@ ISR(USART0_RXC_vect){
                 break;
         }
     }
+
 }

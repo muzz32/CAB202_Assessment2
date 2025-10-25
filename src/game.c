@@ -4,6 +4,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "sequence.h"
 #include "button.h"
@@ -34,6 +35,7 @@ uint8_t input, curr_seq;
 uint32_t new_seed;
 LFSR lfsr;
 uint8_t randnum, display_index = 0;
+uint8_t score_check_res;
 //volatile char hex_seed[9];  
 
 volatile game_state state = PROGRESS;
@@ -182,9 +184,11 @@ int main(void){
                 elapsed_time = 0;
                 while (elapsed_time<playback_delay);
 
-                uint8_t score_check_res = check_scores(&highscore_table, lfsr.sequence_length);
+                score_check_res = check_scores(highscore_table, lfsr.sequence_length);
                 if (score_check_res)
                 {
+                    printf("Enter name: ");
+                    elapsed_time = 0;
                     state = GET_HIGHSCORE;
                 }
                 else{
@@ -205,12 +209,49 @@ int main(void){
             if(seed_ready){
                 new_seed = strtoul((const char*)hex_seed, NULL, 16);
                 lfsr.seed = new_seed;
+                seed_ready = 0;
                 //printf("%08lx", lfsr.seed);
             }
             state = pre_seed_state;
             break;
         case GET_HIGHSCORE:
-            printf("Enter name: ");
+            if(name_ready){
+                USER new_user;
+                strncpy(new_user.name, (const char*)temp_name, name_index);
+                new_user.name[20] = '\0';
+                resort_list(new_user, score_check_res, highscore_table);
+                score_check_res = 0;
+                name_ready = 0;
+                print_user_table(highscore_table, TABLE_LENGTH);
+                lfsr.sequence_length = 0;
+                lfsr.start_state = lfsr.state;
+                state = PROGRESS;
+            }
+            else{
+                if (uart_input_recieved)
+                {
+                    elapsed_time = 0;
+                    uart_input_recieved = 0;
+                }
+                else if(elapsed_time >= 5000){
+                    USER new_user = empty_user;
+                    if (name_index)
+                    {
+                        temp_name[name_index+1] = '\0';
+                        strncpy(new_user.name, (const char*)temp_name, name_index+1);
+                        new_user.score = lfsr.sequence_length;
+                    }
+                    else{
+                        new_user.score = lfsr.sequence_length;
+                    }
+                    resort_list(new_user, score_check_res, highscore_table);
+                    score_check_res = 0;
+                    print_user_table(highscore_table, TABLE_LENGTH);
+                    lfsr.sequence_length = 0;
+                    lfsr.start_state = lfsr.state;
+                    state = PROGRESS;
+                }
+            }
             break;
         default:
             state = RESET;
@@ -232,7 +273,9 @@ void game_init(USER *highscore_table) {
         highscore_table[i] = empty_user;
     }
     button_is_released = 0;
-    curr_button_state, prev_button_state = 0xFF;
+    curr_button_state = 0xFF;
+    prev_button_state = 0xFF;
+    score_check_res = 0;
 }
 
 uint8_t check_scores(USER *highscore_table, uint16_t score){
@@ -248,6 +291,23 @@ uint8_t check_scores(USER *highscore_table, uint16_t score){
     }
     return highscore_pos;
 }
+
+void resort_list(USER new_user, uint8_t new_user_place, USER *highscore_table){
+    if(new_user_place == 5){
+        highscore_table[4] = new_user; //Store new user in 5th, no sort needed
+    }
+    else{
+        uint8_t new_user_index = new_user_place - 1;
+
+        for(uint8_t i = 4; i<new_user_index; i--)
+        {
+            highscore_table[i] = highscore_table[i-1];
+        }
+        highscore_table[new_user_index] = new_user;
+    }    
+}
+
+
 
 void set_outputs(uint8_t index){
     update_delay();
@@ -281,7 +341,7 @@ void outputs_off(){
 
 void init_sys(){
     cli();
-    game_init(&highscore_table);
+    game_init(highscore_table);
     lfsr_init(&lfsr);
     disp_init();
     timer_init();
