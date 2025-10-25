@@ -27,17 +27,23 @@ uint8_t step(LFSR *lfsr){
 void reset_lfsr(LFSR *lfsr){
     if(seed_ready){
         lfsr->state = seq_seed;
+        lfsr->start_state = seq_seed;
         seed_ready = 0;
     }
-    lfsr->state = lfsr->start_state;
+    else{
+        lfsr->state = lfsr->start_state;
+    }
 }
 
 void set_start_lfsr(LFSR *lfsr){
     if(seed_ready){
         lfsr->state = seq_seed;
+        lfsr->start_state = seq_seed;
         seed_ready = 0;
     }
-    lfsr->start_state = lfsr->state;
+    else{
+        lfsr->start_state = lfsr->state;
+    }
 }
 
 void lfsr_init(LFSR *lfsr){

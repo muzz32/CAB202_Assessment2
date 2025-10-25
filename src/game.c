@@ -177,7 +177,7 @@ int main(void){
                 update_delay();
                 display_score(lfsr.sequence_length);
                 elapsed_time = 0;
-                state = SHOW_SCORE;
+                //state = SHOW_SCORE;
                 while (elapsed_time<playback_delay);
                 outputs_off(); 
                 elapsed_time = 0;
