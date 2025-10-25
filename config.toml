@@ -12,18 +12,18 @@
 # Commenting/removing one of these lines is equivalent to disabling the corresponding test
 
 # Section A
-gameplay = false
-pushbutton-hold = false
-pushbutton-debouncing = false
+gameplay = true
+pushbutton-hold = true
+pushbutton-debouncing = true
 
 # Section B
-sequencing = false
+sequencing = true
 
 # Section C
-playback-delay = false
+playback-delay = true
 
 # Section D
-playback-frequency = false
+playback-frequency = true
 
 # Section E
 uart-gameplay = true
