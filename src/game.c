@@ -269,8 +269,8 @@ int main(void){
             if(name_ready){
                 USER new_user;
                 if(name_index==20){
-                    strncpy(new_user.name, (const char*)temp_name, 21);
-                    new_user.name[21] = '\0';
+                    strncpy(new_user.name, (const char*)temp_name, 20);
+                    new_user.name[20] = '\0';
                 }
                 else{
                     strncpy(new_user.name, (const char*)temp_name, name_index);
