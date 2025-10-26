@@ -26,16 +26,22 @@ void disp_init(){
     left_dig = DISP_OFF | DISP_LHS;
     right_dig = DISP_OFF; //Digits initially set to off bitmasks
 
-    SPI0.CTRLA |= SPI_ENABLE_bm;
-    SPI0.DATA = right_dig;
+    SPI0.CTRLA |= SPI_ENABLE_bm; // Enable SPI
+    SPI0.DATA = right_dig; //Load the right_dig data into SPI0 (Currently off)
 }
 
+/*
+Updates the left and right digits with two bitmasks. Doesn't immediately
+load that data, rather it updates the date to be loaded by swap_digit
+*/
 void set_display(uint8_t left, uint8_t right){
     left_dig = left | DISP_LHS;
     right_dig = right;
 }
 
-//https://stackoverflow.com/questions/21074682/dividing-a-number-without-using-division-operator-in-c
+/*
+Displays a 
+*/
 void display_score(uint8_t score){
     
     uint8_t over_hundred = 0;

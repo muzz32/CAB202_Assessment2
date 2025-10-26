@@ -148,25 +148,25 @@ ISR(USART0_RXC_vect){
             case S1_Q:
                 uart_input = 0;
                 uart_input_recieved = 1;
-                //printf("1");
+                printf("1/q");
                 break;
             case S2_2:
             case S2_W:
                 uart_input = 1;
                 uart_input_recieved = 1;
-                //printf("2");
+                printf("2/w");
                 break;
             case S3_3:
             case S3_E:
                 uart_input = 2;
                 uart_input_recieved = 1;
-                //printf("3");
+                printf("3/e");
                 break;
             case S4_4:
             case S4_R:
                 uart_input = 3;
                 uart_input_recieved = 1;
-                //printf("4");
+                printf("4/r");
                 break;
             case INC_FREQ_1:
             case INC_FREQ_2:
@@ -181,7 +181,7 @@ ISR(USART0_RXC_vect){
             case RESET_1:
             case RESET_2:
                 state = RESET;
-                //printf("res");
+                printf("res");
                 break;
             case SEED_1:
             case SEED_2:
