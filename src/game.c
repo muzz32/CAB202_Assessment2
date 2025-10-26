@@ -344,6 +344,7 @@ void handle_new_user(USER new_user){
     name_ready = 0;
     lfsr.sequence_length = 0;
     set_start_lfsr(&lfsr);
+    reset_lfsr(&lfsr);
     name_index = 0;
     uart_input_recieved = 0;  // dont pickup old inputs
     name_input_received = 0;
