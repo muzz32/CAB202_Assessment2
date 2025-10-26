@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include "game.h"
 
+/*
+Characters that are used for triggering different game events over UART
+*/
 #define S1_1 '1'
 #define S1_Q 'q'
 

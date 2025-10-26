@@ -165,7 +165,16 @@ ISR(USART0_RXC_vect){
     }
     /*
     If no name is being entered, and a SEED command was triggered by the user, they can continue 
-    adding to the seed
+    adding to the seed.
+
+    If the seed index is less than 7 (less than 8 char entered), add the char to the hex_seed array
+    with get_seed and increment the seed_index.
+
+    If the seed index is 7 add the last char and check the whole arrays validity. If it is a valid 
+    hex number, use strtoul, which converts a string to a unsigned long hex integer (uint32_t), to update
+    the seq_seed variable, and signal that the seed had been updated by setting seed_ready. If its not valid,
+    terminate the array and clear the seed_ready variable. 
+    Also clear the getting_seed and seed_index to go back to regular UART inputs and prepare for new seed entries
     */
     else if(getting_seed){
         if (seed_index < 7)
@@ -181,59 +190,76 @@ ISR(USART0_RXC_vect){
                 seed_ready = 1;
             }
             else{
+                hex_seed[0]= '\0';
                 seed_ready = 0;
             }
             getting_seed = 0;
             seed_index = 0;
         }
     }
+    /*
+    If the above two cases aren't met, check if the input matches one of the predefined
+    chars in uart.h, and carry out the relevant code.
+    */
     else{
         switch (char_recieved)
-        {
+        {   /*
+            If the input matches one of the push button chars, set the uart_input
+            to what it is and set the uart_input_recieved variable to signal that
+            the game should use this input and not wait for a button press.
+            */
             case S1_1:
             case S1_Q:
                 uart_input = 0;
                 uart_input_recieved = 1;
-                printf("1/q");
+                //printf("1/q");
                 break;
             case S2_2:
             case S2_W:
                 uart_input = 1;
                 uart_input_recieved = 1;
-                printf("2/w");
+                //printf("2/w");
                 break;
             case S3_3:
             case S3_E:
                 uart_input = 2;
                 uart_input_recieved = 1;
-                printf("3/e");
+                //printf("3/e");
                 break;
             case S4_4:
             case S4_R:
                 uart_input = 3;
                 uart_input_recieved = 1;
-                printf("4/r");
+                //printf("4/r");
                 break;
+            /*
+            If the input is the char for Increasing or decreasing the octave, run 
+            that function
+            */
             case INC_FREQ_1:
             case INC_FREQ_2:
                 increase_octave();
-                //printf("inc");
                 break;
             case DEC_FREQ_1:
             case DEC_FREQ_2:
                 decrease_octave();
-                //printf("dec");
                 break;
+            /*
+            If the input is the char for reseting the game, set the game state to 
+            RESET
+            */
             case RESET_1:
             case RESET_2:
                 state = RESET;
-                printf("res");
                 break;
+            /*
+            If the input is the char for changing the seed, set tgetting_seed variable to start 
+            getting seed inputs
+            */
             case SEED_1:
             case SEED_2:
                 getting_seed = 1;
                 seed_index = 0;
-                //printf("gettingseed\n");
                 break;
             default:
                 break;
