@@ -30,6 +30,7 @@ void update_buttons();
 void set_outputs(uint8_t index);
 void outputs_off();
 void init_sys();
+void handle_new_user(USER new_user);
 uint8_t check_scores(USER *highscore_table, uint16_t score);
 void resort_list(USER new_user, uint8_t new_user_place, USER *highscore_table);
 extern volatile game_state state;

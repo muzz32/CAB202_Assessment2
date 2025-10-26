@@ -220,13 +220,7 @@ int main(void){
                     new_user.name[name_index] = '\0';
                 }
                 new_user.score = lfsr.sequence_length;
-                resort_list(new_user, score_check_res, highscore_table);
-                score_check_res = 0;
-                name_ready = 0;
-                print_user_table(highscore_table, TABLE_LENGTH);
-                lfsr.sequence_length = 0;
-                set_start_lfsr(&lfsr);
-                name_index = 0;
+                handle_new_user(new_user);
                 state = PROGRESS;
             }
             else{
@@ -246,12 +240,7 @@ int main(void){
                     else{
                         new_user.score = lfsr.sequence_length;
                     }
-                    resort_list(new_user, score_check_res, highscore_table);
-                    score_check_res = 0;
-                    print_user_table(highscore_table, TABLE_LENGTH);
-                    lfsr.sequence_length = 0;
-                    set_start_lfsr(&lfsr);
-                    name_index = 0;
+                    handle_new_user(new_user);
                     state = PROGRESS;
                 }
             }
@@ -261,6 +250,16 @@ int main(void){
             break;
         }
     }
+}
+
+void handle_new_user(USER new_user){
+    resort_list(new_user, score_check_res, highscore_table);
+    score_check_res = 0;
+    name_ready = 0;
+    print_user_table(highscore_table, TABLE_LENGTH);
+    lfsr.sequence_length = 0;
+    set_start_lfsr(&lfsr);
+    name_index = 0;
 }
 
 void update_buttons(){
