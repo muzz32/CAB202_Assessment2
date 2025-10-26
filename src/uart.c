@@ -94,7 +94,7 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
         seed_valid = 1;
     }
     else{
-        seed_valid &= temp_valid;
+        seed_valid = seed_valid && temp_valid;
     }
 
     hex_seed[seed_index] = char_input;
