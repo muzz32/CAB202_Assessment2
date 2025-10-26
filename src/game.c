@@ -233,8 +233,8 @@ int main(void){
                     USER new_user = empty_user;
                     if (name_index)
                     {
-                        temp_name[name_index+1] = '\0';
-                        strncpy(new_user.name, (const char*)temp_name, name_index+1);
+                        temp_name[name_index] = '\0';
+                        strncpy(new_user.name, (const char*)temp_name, name_index);
                         new_user.score = lfsr.sequence_length;
                     }
                     else{
