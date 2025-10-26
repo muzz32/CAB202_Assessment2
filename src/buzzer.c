@@ -28,6 +28,14 @@ void buzzer_init(){
     tops[3] = 18774;
 }
 
+
+/*
+Sets the compare value to 0 to turn off the buzzer
+*/
+void buzzer_off(){
+    TCA0.SINGLE.CMP0BUF = 0;
+}
+
 /*
 Plays one of 4 tones stored in the tops array on the buzzer
 at a 50% duty cycle. If index is out of bounds, the buzzer is
@@ -41,13 +49,6 @@ void set_buzzer(uint8_t index){
         TCA0.SINGLE.PERBUF = tops[index]; // Period set to the tone in the array
         TCA0.SINGLE.CMP0BUF = tops[index] >> 1; // Compare set to half period for 50% duty cycle
     }
-}
-
-/*
-Sets the compare value to 0 to turn off the buzzer
-*/
-void buzzer_off(){
-    TCA0.SINGLE.CMP0BUF = 0;
 }
 
 /*
