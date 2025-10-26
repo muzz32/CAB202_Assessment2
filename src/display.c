@@ -8,15 +8,6 @@ uint8_t left_dig;
 uint8_t right_dig;
 static const uint8_t nums[10] = {DISP_ZERO, DISP_ONE, DISP_TWO, DISP_THREE, DISP_FOUR, DISP_FIVE, DISP_SIX, DISP_SEVEN, DISP_EIGHT, DISP_NINE};
 
-//     _____
-//    |  A  |
-//   F|     |B
-//    |_____|
-//    |  G  |
-//   E|     |C
-//    |_____|   
-//       D  
-                        //xFABGCDE
 void disp_init(){
     PORTMUX.SPIROUTEA = PORTMUX_SPI0_ALT1_gc; //Configuration that the QUTY uses on page 144
 

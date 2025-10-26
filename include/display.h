@@ -2,6 +2,17 @@
 #define DISPLAY_H
 
 #include <stdint.h>
+
+
+//     _____
+//    |  A  |
+//   F|     |B
+//    |_____|
+//    |  G  |
+//   E|     |C
+//    |_____|   
+//       D  
+                        //xFABGCDE
 #define DISP_LHS        0b10000000
 #define DISP_OFF        0b01111111
 #define DISP_BAR_1      0b00111110

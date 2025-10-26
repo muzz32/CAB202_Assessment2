@@ -262,15 +262,30 @@ void handle_new_user(USER new_user){
     name_index = 0;
 }
 
+/*
+Updates the button_input(falling edge) and button_release(rising edge)
+variables by reading from button debounced (Set in ISR in timer.c by using
+update_buttons in button.c)
+*/
 void update_buttons(){
-    prev_button_state = curr_button_state;
+    //Store previous state before overwriting current state
+    prev_button_state = curr_button_state; 
+    // Get the current debounced button state
     curr_button_state = button_debounced;
+    // Get what changed by xoring the current state with the previous state
     button_change = curr_button_state ^ prev_button_state;
+    // Inputs are where falling edges are detected on the pins (so and with the change and the previous state)
     button_input = button_change & prev_button_state; 
+    // Releasing the button can be detected where there is a rising edge on a pin (so and button changes with the current state)
     button_release =  button_change & curr_button_state;
 }
 
+/*
+Ensures that all game related variables are set to a safe
+initial state.
+*/
 void game_init(USER *highscore_table) {
+    // Overwrite all entries in the highscore table with blank users
     for(uint8_t i =0; i < (TABLE_LENGTH-1); i++){
         highscore_table[i] = empty_user;
     }
@@ -280,34 +295,60 @@ void game_init(USER *highscore_table) {
     score_check_res = 0;
 }
 
+/*
+Used in the HIDE_SCORE state to check if a user should be added
+to the highscore table.  Will return a 0 if their score isnt in the
+top 5 spots. If they are in the top five, It'll return their highscore position
+(1 for 1st, 2 for 2nd and so on)
+*/
 uint8_t check_scores(USER *highscore_table, uint16_t score){
     uint8_t highscore_pos=0;
+    /* For each user (starting at 1st place) in the highscore_table,
+       if the score given to the function is higher than that users score,
+       return the current position in the table.
+    */
     for(uint8_t i = 1; i <= TABLE_LENGTH; i++){
         if(highscore_table[i-1].score < score){
             highscore_pos = i;
             return highscore_pos;
         }
     }
+    // If no score is less than the entered score, the function will return 0
     return highscore_pos;
 }
 
+/*
+Sorts the highscore_table of Users to accomodate a new user and their 
+position in the leaderboard. 
+*/
 void resort_list(USER new_user, uint8_t new_user_place, USER *highscore_table){
     if(new_user_place == 5){
         highscore_table[4] = new_user; //Store new user in 5th, no sort needed
     }
     else{
+        // Null index the users place (1st becomes 0, 2nd becomes 1 and so on)
         uint8_t new_user_index = new_user_place - 1;
 
+        /*
+        Starting at the lowest position in the array, each
+        user is shifted down one position until i equals the
+        new_user_place
+        */
         for(uint8_t i = 4; i>new_user_index; i--)
         {
             highscore_table[i] = highscore_table[i-1];
         }
+        // Insert the new user into the correct position in the array
         highscore_table[new_user_index] = new_user;
     }    
 }
 
 
-
+/*
+Given a number from 0-3. this function outputs the correct bar 
+on the display and tone on the buzzer. It also updates the delay 
+at the start and resets the elapsed_time variable at the end.
+*/
 void set_outputs(uint8_t index){
     update_delay();
     switch (index)
@@ -332,21 +373,27 @@ void set_outputs(uint8_t index){
     elapsed_time = 0;
 }
 
+/*
+Turns off the display and buzzer
+*/
 void outputs_off(){
     buzzer_off();
     set_display(DISP_OFF, DISP_OFF);
 }
 
-
+/*
+Uses all init functions for interfaces relevant to setting up
+the system for gameplay
+*/
 void init_sys(){
-    cli();
+    cli(); // Pauses global interrupts
     game_init(highscore_table);
-    lfsr_init(&lfsr);
+    lfsr_init(&lfsr); // Passes the address of the lfsr struct assigned in this file
     disp_init();
     timer_init();
     buzzer_init();
     uart_init();
     button_init();
     adc_init();
-    sei();
+    sei(); // Enables global interrupts
 }
