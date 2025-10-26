@@ -16,6 +16,7 @@ typedef enum {
     FAIL,
     RESET,
     SHOW_SCORE,
+    HIDE_SCORE,
     GET_HIGHSCORE
 } game_state;
 

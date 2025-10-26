@@ -174,12 +174,20 @@ int main(void){
                 update_delay();
                 display_score(lfsr.sequence_length);
                 elapsed_time = 0;
-                //state = SHOW_SCORE;
-                while (elapsed_time<playback_delay);
+                state = SHOW_SCORE;                
+            }
+            break;
+        case SHOW_SCORE:
+            if (elapsed_time >= playback_delay)
+            {
                 outputs_off(); 
                 elapsed_time = 0;
-                while (elapsed_time<playback_delay);
-
+                state = HIDE_SCORE;
+            }
+            break;
+        case HIDE_SCORE:
+            if (elapsed_time >= playback_delay)
+            {
                 score_check_res = check_scores(highscore_table, lfsr.sequence_length);
                 if (score_check_res)
                 {
@@ -191,16 +199,14 @@ int main(void){
                     lfsr.sequence_length = 0;
                     set_start_lfsr(&lfsr);
                     state = PROGRESS;
-                }
-            }
+                }            
+            }            
             break;
         case RESET:
             buzzer_init();
             lfsr_init(&lfsr);
             outputs_off();
             state = PROGRESS;
-            break;
-        case SHOW_SCORE:
             break;
         case GET_HIGHSCORE:
             if(name_ready){
