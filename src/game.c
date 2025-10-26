@@ -295,7 +295,7 @@ int main(void){
                     elapsed_time = 0;
                     name_input_received = 0;
                 }
-                else if(elapsed_time > 5000){
+                else if(elapsed_time >= 5000){
                     USER new_user = empty_user;
                     if (name_index)
                     {
@@ -344,7 +344,7 @@ void handle_new_user(USER new_user){
     name_ready = 0;
     lfsr.sequence_length = 0;
     set_start_lfsr(&lfsr);
-    reset_lfsr(&lfsr);
+    //reset_lfsr(&lfsr);
     name_index = 0;
     uart_input_recieved = 0;  // dont pickup old inputs
     name_input_received = 0;
