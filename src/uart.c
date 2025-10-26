@@ -83,7 +83,7 @@ void print_user_table(USER *table, uint8_t table_length){
 uint8_t get_seed(uint8_t seed_index, char char_input){
     uint8_t temp_valid = 0;
     static uint8_t seed_valid;
-    if((char_input >= '0' && char_input <= '9') || (char_input >= 'a' && char_input <= 'f')|| (char_input >= 'A' && char_input <= 'F')){
+    if((char_input >= '0' && char_input <= '9') || (char_input >= 'a' && char_input <= 'f')){
         temp_valid = 1;
     }
     else{

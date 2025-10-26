@@ -61,8 +61,8 @@ int main(void){
         switch (state)
         {
         case PROGRESS:
-            printf("\nseed: %#08lX\n", seq_seed);
-            printf("\nstate: %#08lX\n", lfsr.state);
+            //printf("\nseed: %#08lX\n", seq_seed);
+            //printf("\nstate: %#08lX\n", lfsr.state);
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
             //update_delay();
