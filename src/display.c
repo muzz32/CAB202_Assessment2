@@ -4,25 +4,27 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "display.h"
+
+//The spi data that gets transmitted for the left and right dig
 uint8_t left_dig;
 uint8_t right_dig;
+
+// An array of digit bitmasks from 0 to 9. Used in display score.
 static const uint8_t nums[10] = {DISP_ZERO, DISP_ONE, DISP_TWO, DISP_THREE, DISP_FOUR, DISP_FIVE, DISP_SIX, DISP_SEVEN, DISP_EIGHT, DISP_NINE};
 
 void disp_init(){
-    PORTMUX.SPIROUTEA = PORTMUX_SPI0_ALT1_gc; //Configuration that the QUTY uses on page 144
-
+    PORTMUX.SPIROUTEA = PORTMUX_SPI0_ALT1_gc; //Alternate pin configuration that the QUTY uses on page 144
     PORTC.DIRSET = (PIN0_bm | PIN2_bm); //Enable SPI CLK and SPI MOSI (Master out Slave in) as outputs
     SPI0.CTRLA = SPI_MASTER_bm; // Enable this as the master 
     PORTA.OUTSET = PIN1_bm; // DISP_LATCH initial high
     PORTA.DIRSET = PIN1_bm; // set DISP_LATCH pin as output
     PORTB.OUTSET = PIN1_bm;
-    PORTB.DIRSET = PIN1_bm; //Set display as out put
-    //SPI0.CTRLB &= ~SPI_BUFEN_bm; //disable buffer mode
-    SPI0.CTRLB = SPI_SSD_bm;       // Mode 0, client select disable, unbuffered
+    PORTB.DIRSET = PIN1_bm; //Set display as output
+    SPI0.CTRLB = SPI_SSD_bm; // Mode 0, client select disable, unbuffered
     SPI0.INTCTRL = SPI_IE_bm;  //Enable interrupts
 
     left_dig = DISP_OFF | DISP_LHS;
-    right_dig = DISP_OFF;
+    right_dig = DISP_OFF; //Digits initially set to off bitmasks
 
     SPI0.CTRLA |= SPI_ENABLE_bm;
     SPI0.DATA = right_dig;
