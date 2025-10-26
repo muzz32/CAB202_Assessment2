@@ -42,6 +42,7 @@ int main(void){
             sequence index is reset. The first step of the sequence is played, and the state
             gets changed to DISPLAY OFF
             */
+            reset_lfsr(&lfsr);
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
             randnum = step(&lfsr);  
