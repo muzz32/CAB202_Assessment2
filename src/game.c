@@ -295,7 +295,7 @@ int main(void){
                     elapsed_time = 0;
                     name_input_received = 0;
                 }
-                else if(elapsed_time >= 5000){
+                else if(elapsed_time > 5000){
                     USER new_user = empty_user;
                     if (name_index)
                     {
