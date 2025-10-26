@@ -262,6 +262,7 @@ void handle_new_user(USER new_user){
     name_index = 0;
     uart_input_recieved = 0;  // dont pickup old inputs
     name_input_received = 0;
+    temp_name[0] = '\0';  
 }
 
 /*
