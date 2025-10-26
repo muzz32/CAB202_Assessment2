@@ -198,6 +198,7 @@ int main(void){
                 else{
                     lfsr.sequence_length = 0;
                     set_start_lfsr(&lfsr);
+                    elapsed_time = 0;
                     state = PROGRESS;
                 }            
             }            
@@ -263,6 +264,7 @@ void handle_new_user(USER new_user){
     uart_input_recieved = 0;  // dont pickup old inputs
     name_input_received = 0;
     temp_name[0] = '\0';  
+    elapsed_time = 0;
 }
 
 /*
