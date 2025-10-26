@@ -15,67 +15,53 @@
 #include "uart.h"
 #include "delay.h"
 
-#define TABLE_LENGTH 5
 
-// typedef enum{
-//     PROGRESS,
-//     DISPLAY,
-//     WAIT_INPUT,
-//     WAIT_RELEASE,
-//     HANDLE_INPUT,
-//     CORRECT,
-//     SUCCESS,
-//     FAIL,
-//     RESET    
-// }game_state;
-uint8_t button_is_released = 0;
-uint8_t curr_button_state, prev_button_state = 0xFF;
-uint8_t button_change, button_release, button_input = 0;
-uint8_t input, curr_seq;
-uint32_t new_seed;
+volatile game_state state;
 LFSR lfsr;
-uint8_t randnum, display_index = 0;
-uint8_t score_check_res;
-//volatile char hex_seed[9];  
 
-volatile game_state state = PROGRESS;
-
-
+// The highscore table, which is an array of USERS length 5
 USER highscore_table[TABLE_LENGTH];
+// A user with no score and no name, used for reseting the table and temporarily adding to it
 USER empty_user = {
     .name = "\0",
     .score = 0
 };
 
-
 int main(void){
 
     init_sys();
 
-    //game_state state = PROGRESS;
-
     while (1)
     {
-        //update_delay();
         update_buttons();
         switch (state)
         {
         case PROGRESS:
-            //printf("\nseed: %#08lX\n", seq_seed);
-            //printf("\nstate: %#08lX\n", lfsr.state);
+            /*
+            In the progress state, the sequence length is increased (initialised at 0) and the
+            sequence index is reset. The first step of the sequence is played, and the state
+            gets changed to DISPLAY OFF
+            */
             lfsr.sequence_length++;
             lfsr.sequence_index = 0;
-            //update_delay();
             randnum = step(&lfsr);  
             set_outputs(randnum);
             state = DISPLAY_OFF;
             break;
         case DISPLAY_ON:
+            /*
+            If all steps in the sequence have been played (ie display_index == sequence length),
+            the lfsr is reset back to its start state and the state is changed to WAIT_INPUT
+            */
             if(display_index == lfsr.sequence_length){
                 reset_lfsr(&lfsr);
                 display_index = 0;
                 state = WAIT_INPUT;
             }
+            /*
+            If the sequence isn't finished, and the display has been off for half the playback 
+            delay, display the next step and go back to DISPLAY_OFF
+            */
             else if (elapsed_time >= (playback_delay>>1)){
                 randnum = step(&lfsr);  
                 set_outputs(randnum);
@@ -83,6 +69,10 @@ int main(void){
             }
             break;
         case DISPLAY_OFF:
+            /*
+            Once half the playback delay has elapsed, the display is turned off, 
+            the display index is increased and the state changes to DISPLAY_ON
+            */
             if (elapsed_time >= (playback_delay>>1))
             {
                 outputs_off();
@@ -92,6 +82,12 @@ int main(void){
             }
             break;
         case WAIT_INPUT:
+            /*
+            The WAIT_INPUT state handles both UART and physical inputs. If a button input is
+            detected, the input is set to what ever button was pressed (Found by anding the 
+            button_input with the bitmasks of each of the buttons), that input is displayed
+            and the state gets changed to the WAIT_RELEASE state
+            */
             if(button_input){
                 if(button_input & PIN4_bm){
                     input = 0;
@@ -105,25 +101,42 @@ int main(void){
                 else if(button_input & PIN7_bm){
                     input = 3;
                 }
-                //update_delay();
+                else{state = RESET;}
                 set_outputs(input);
-                elapsed_time = 0;  
                 state = WAIT_RELEASE;
                 button_is_released = 0;
             }
+            /*
+            If a uart input has been recieved and its a valid input, the input is set to that,
+            its displayed and the state is changed to WAIT_RELEASE. The uart_input_recieved 
+            variable is set to zero so the input doesnt get used again, and the button_is_released
+            variable is set to ignore checks for button rising edges.
+            */
             else if(uart_input_recieved && (uart_input >= 0 && uart_input <= 3)){
                 input = uart_input;
                 set_outputs(input);
-                elapsed_time = 0;  
                 state = WAIT_RELEASE;
                 uart_input_recieved = 0;
                 button_is_released = 1; //Skip button check and go straight to time check
             }
             break;
         case WAIT_RELEASE:
+            /*
+            This state ensures that button presses, if physical, are on for either the entirety
+            of the button press, or half the playback delay (depending on which is longer). If
+            its a UART input, the input just has to be displayed for half the playback delay.
+
+            If the button_is_release variable isnt set, wait for a 
+            button rising edge (set by button_release) and then set it
+            */
             if(!button_is_released){
                 if(button_release) button_is_released = 1;
             }
+            /*
+            If the button is released, and half the playback delay has elapsed,
+            clear the button_is_released variable, turn off the output and go to
+            the HANDLE_INPUT state
+            */
             else{
                 if (elapsed_time >= (playback_delay>>1))
                 {
@@ -134,45 +147,70 @@ int main(void){
             }
             break;
         case HANDLE_INPUT:
+            /*
+            Sets the curr_seq to the current step of the shift register.
+            If the input is the same as the curr_seq, the user is correct,
+            otherwise they're wrong
+            */
             curr_seq = step(&lfsr);
             lfsr.sequence_index++;
             if(curr_seq == input)
             {
+                /*
+                If the sequence index is equal to the length, the sequence is complete
+                and the user is successful. Display the success pattern, and print out
+                a success message and their score. Then, go to the SUCCESS state
+                */
                 if(lfsr.sequence_index == lfsr.sequence_length){
                     update_delay();
                     set_display(SUCCESS_PATTERN, SUCCESS_PATTERN);
+                    elapsed_time = 0;
                     printf("SUCCESS\n");
                     printf("%u\n", lfsr.sequence_length);
-                    elapsed_time = 0;
                     state = SUCCESS;
                 }
+                /*
+                If the sequence index is less than the length, the sequence isn't complete,
+                so go back to WAIT_INPUT and get the next one
+                */
                 else if(lfsr.sequence_index < lfsr.sequence_length){
                     state = WAIT_INPUT;
                 }
             }
+            /*
+            If the user is incorrect, display the fail pattern, print out a game over message and
+            their final score, and then go to the FAIL state
+            */
             else{
                 update_delay();
                 set_display(FAIL_PATTERN, FAIL_PATTERN);
+                elapsed_time = 0;
                 printf("GAME OVER\n");
                 printf("%u\n", lfsr.sequence_length);
-                elapsed_time = 0;
                 state = FAIL;
             }                        
             break;
         case SUCCESS:
+            /*
+            Turn the success patter off after the playback delay has elapsed,
+            reset the lfsr to prepare for the sequence to be displayed, and go
+            back to the PROGRESS state
+            */
             if (elapsed_time >= playback_delay)
             {
                 outputs_off();
-                //elapsed_time = 0;
                 reset_lfsr(&lfsr);
                 state = PROGRESS;
             }
             
             break;
         case FAIL:
+            /*
+            Once the fail pattern has been displayed for the playback delay, turn it off, display their
+            score and go to the SHOW_SCORE state
+            */
             if(elapsed_time >= playback_delay){
                 outputs_off();
-                //elapsed_time = 0;
                 update_delay();
                 display_score(lfsr.sequence_length);
                 elapsed_time = 0;
@@ -180,6 +218,9 @@ int main(void){
             }
             break;
         case SHOW_SCORE:
+            /*
+            Once the playback delay is elapsed, turn it off and go to the HIDE_SCORE state
+            */
             if (elapsed_time >= playback_delay)
             {
                 outputs_off(); 
@@ -188,6 +229,12 @@ int main(void){
             }
             break;
         case HIDE_SCORE:
+            /*
+            Once the display has been off for the playback delay, check if the users score is 
+            is the top 5 highest scores (the highscore_table). If it is, prompt the user to
+            enter their name and go to the GET_HIGHSCORE state. Otherwise, start a new game by 
+            resetting the start state of the lfsr and going back to PROGRESS
+            */
             if (elapsed_time >= playback_delay)
             {
                 score_check_res = check_scores(highscore_table, lfsr.sequence_length);
@@ -205,17 +252,24 @@ int main(void){
                 }            
             }            
             break;
-        case RESET:
-            buzzer_init();
-            lfsr_init(&lfsr);
-            outputs_off();
-            state = PROGRESS;
-            break;
         case GET_HIGHSCORE:
+            /*
+            This state gets a new users name and adds it to the highscore table.
+
+            If the users name is finished (Signaled when the enter key is pressed)
+            and its 20 characters long, copy all the characters in temp_name to the
+            new users name.
+
+            If its not 20 characters long, copy the amount of characters entered (plus one) and
+            null terminate it accordingly. 
+
+            Then, assign the users score to the lfsr sequence length, handle the new user, and
+            start a new game by going back to the PROGRESS state
+            */
             if(name_ready){
                 USER new_user;
                 if(name_index==20){
-                    strncpy(new_user.name, (const char*)temp_name, 20);
+                    strncpy(new_user.name, (const char*)temp_name, 21);
                     new_user.name[21] = '\0';
                 }
                 else{
@@ -226,6 +280,15 @@ int main(void){
                 handle_new_user(new_user);
                 state = PROGRESS;
             }
+            /*
+            If the name isn't complete, check if an input has been recieved. If an input for the name
+            has been recieved, reset the timer and clear the name_input_recieved variable.
+
+            If an input hasnt been received and its been 5 seconds, Assign the users name to what ever
+            has been entered so far. If no name has been entered (ie name_index == 0), just leave the name empty
+            and assign the current score to that empty user. Handle the user like above, and then start a new game
+            by going back to PROGRESS
+            */
             else{
                 if (name_input_received)
                 {
@@ -248,6 +311,18 @@ int main(void){
                 }
             }
             break;
+        case RESET:
+            /*
+            This is the games default state incase anything goes wrong. A user can also
+            go to this state by entering the appropriate UART input. It will reset all 
+            tones of the buzzer, re-initialise the lfsr, turn everything off, and then
+            go to PROGRESS
+            */
+            buzzer_init();
+            lfsr_init(&lfsr);
+            outputs_off();
+            state = PROGRESS;
+            break;
         default:
             state = RESET;
             break;
@@ -255,11 +330,18 @@ int main(void){
     }
 }
 
+
+/*
+Contains all code relevant to adding a new user to the highscore table.
+It first resorts the new_user into the highscore table, and then prints
+that table out. It then resets all the relavent variables that were used,
+including the temp_name, and also sets the lfsr start point.
+*/
 void handle_new_user(USER new_user){
     resort_list(new_user, score_check_res, highscore_table);
+    print_user_table(highscore_table, TABLE_LENGTH);
     score_check_res = 0;
     name_ready = 0;
-    print_user_table(highscore_table, TABLE_LENGTH);
     lfsr.sequence_length = 0;
     set_start_lfsr(&lfsr);
     name_index = 0;
@@ -300,6 +382,12 @@ void game_init(USER *highscore_table) {
     curr_button_state = 0xFF;
     prev_button_state = 0xFF;
     score_check_res = 0;
+    button_change= 0;
+    button_release = 0;
+    button_input = 0;
+    randnum = 0;
+    display_index = 0;
+    state = PROGRESS;
 }
 
 /*

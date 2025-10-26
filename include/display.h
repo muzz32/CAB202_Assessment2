@@ -4,6 +4,13 @@
 #include <stdint.h>
 
 
+/*
+Below outlines some bitmasks that are used to set different digits of the display
+the msb of the bit masks determines which side it turns on. Setting it puts it on
+the left hand side (as seen at DISP_LHS) and clearing it puts it on the right hand 
+side. All digits are by default put on the right, and by or-ing the masks with the
+LHS mask, that position can be changed.
+*/
 //     _____
 //    |  A  |
 //   F|     |B
@@ -30,11 +37,10 @@
 #define DISP_SEVEN      0b01001011   
 #define DISP_EIGHT      SUCCESS_PATTERN   
 #define DISP_NINE       0b00000001    
-//extern uint8_t left_dig;
-//extern uint8_t right_dig;
+
 
 void set_display(uint8_t left, uint8_t right);
-void display_score(uint8_t score);
+void display_score(uint16_t score);
 void disp_init();
 void swap_digit();
 

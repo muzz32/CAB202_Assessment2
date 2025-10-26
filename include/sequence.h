@@ -16,6 +16,6 @@ uint8_t step(LFSR *lfsr);
 
 void reset_lfsr(LFSR *lfsr);
 void set_start_lfsr(LFSR *lfsr);
-extern uint32_t seq_seed;
+extern uint32_t seq_seed; //External so uart can update it
 
 #endif

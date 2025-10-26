@@ -40,18 +40,25 @@ void set_display(uint8_t left, uint8_t right){
 }
 
 /*
-Displays a 
+Takes in an unsigned 16bit integer, usually the users score and updates the left and right dig to
+displays it. If the number is less that 10, the digit will be displayed on the right hand side with the
+left side off. If its over 99, the last two numbers in the score will be displayed, the score being 
+outlined as over 99 in the case of single digits left over by displaying a 0 on the right hand side. 
+All other numbers will be displayed as expected.
 */
-void display_score(uint8_t score){
-    
+void display_score(uint16_t score){
+    // If the score is over 100 (ie 3 digits), subtract 100 till its only 2 digits, and register that its over
     uint8_t over_hundred = 0;
     if(score>99){
-        score-=100;
+        while (score >= 100) {
+            score -= 100;
+        }
         over_hundred = 1;
     }
 
-    uint8_t left_num = 0; 
-    uint8_t right_num = score; //temp storing
+
+    uint16_t left_num = 0; 
+    uint16_t right_num = score; //temp storing
     while(left_num>=10){
         right_num = right_num - 10; //the remainder of the division by 10 (gives whats left over by dividing by 10, giving the right dig)
         left_num++; //Amount of times dig can be divided by 10 (gives first dig)
@@ -59,18 +66,24 @@ void display_score(uint8_t score){
 
     if(left_num == 0){
         if (over_hundred){
+            // If its over 100 and 1 digit, set the left dig to 0 and the display the right number
             set_display(DISP_ZERO, nums[right_num]);
         }
         else{
+            // If its not over 100 and its 1 digit, turn off the left dig and display the right one
             set_display(DISP_OFF, nums[right_num]);
         }
     }
     else{
+        // Otherwise, display the left and right digits of their score
         set_display(nums[left_num], nums[right_num]);
     }
-
 }
 
+/*
+Swaps what digit is being transfered to the display each time its ran. This
+runs in an interrupt every 5ms, giving the illusion that both digits are on
+*/
 void swap_digit(){
     static int digit = 0;
     if (digit) {
@@ -81,6 +94,11 @@ void swap_digit(){
     digit = !digit;
 }
 
+/*
+This interrupt executes everytime data finishes being
+transfered to the display. The latch is triggered when this
+happens, which turns on the display.
+*/
 ISR(SPI0_INT_vect){
     //rising edge on DISP_LATCH
     PORTA.OUTCLR = PIN1_bm;

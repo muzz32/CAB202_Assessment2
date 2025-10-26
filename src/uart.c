@@ -8,9 +8,15 @@
 #include "buzzer.h"
 #include "game.h"
 #include "sequence.h"
+
+// Prototypes needed for FDEV setup
 static int stdio_putchar(char c, FILE *stream);
 static int stdio_getchar(FILE *stream);
+
+// Sets the stdio to use USART for read and write, allowing for use of printf
+// and scanf
 static FILE stdio = FDEV_SETUP_STREAM(stdio_putchar, stdio_getchar, _FDEV_SETUP_RW);
+
 volatile uint8_t uart_input_recieved;
 volatile uint8_t uart_input;
 uint8_t getting_seed;
@@ -23,14 +29,18 @@ volatile char temp_name[21];
 volatile uint8_t name_ready;
 volatile uint8_t name_input_received;
 
+/*
+Initialises the USART peripheral to read and write to stdout/stdin.
+Also sets any relavant variables
+*/
 void uart_init(void)
 {
-    PORTB.DIRSET = PIN2_bm;
-    USART0.BAUD = 1389;                           // 9600 baud @ 3.333 MHz
+    PORTB.DIRSET = PIN2_bm; //Set the Tx pin as output
+    USART0.BAUD = 1389; // 9600 baud @ 3.333 MHz
     USART0.CTRLB = USART_RXEN_bm | USART_TXEN_bm; // Enable Tx/Rx
     USART0.CTRLA = USART_RXCIE_bm; // Enable receive complete interrupt
-    stdout = &stdio;
-    stdin = &stdio;
+    stdout = &stdio; 
+    stdin = &stdio; //Sets stdout and stdin to use the UART stream
     uart_input_recieved = 0;
     uart_input = -1; //Initialised but not a valid value to avoid 
     getting_seed = 0;
@@ -41,12 +51,19 @@ void uart_init(void)
     name_input_received = 0;
 }
 
+/*
+Waits until a char has been recieved over UART, and then returns it
+*/
 char uart_getc(void)
 {
     while (!(USART0.STATUS & USART_RXCIF_bm));
     return USART0.RXDATAL;
 }
 
+/*
+Waits until previous data has been transmitted, and then writes
+char c to the TX register to be transmitted over UART
+*/
 void uart_putc(char c)
 {
     while (!(USART0.STATUS & USART_DREIF_bm)); // Wait for TXDATA empty
@@ -54,22 +71,29 @@ void uart_putc(char c)
 }
 
 
-void uart_puts(const char* c){
-    while (*c != '\0')
-    {
-        uart_putc(*c); //Put the value at c
-        c++; //Increment c
-    }
-}
-
+/*
+This function is called by standard C functions such as printf, and means it will
+use the uart_putc function to write to stdout
+*/
 static int stdio_putchar(char c, FILE *stream) {
     uart_putc(c);
     return c; 
 }
+
+/*
+This function is called by standard C functions such as scanf, and means it will
+use the uart_getc function to read from stdin
+*/
 static int stdio_getchar(FILE *stream) {
     return uart_getc();
 }
 
+/*
+Used to print out the highscore_table. First prints a new line, then for each
+non empty_user entry in the list it'll print the users name and score, along 
+with a new line. When an empty_user entry is found, stop printing and exit the
+function.
+*/
 void print_user_table(USER *table, uint8_t table_length){
     printf("\n");
     for (uint8_t i = 0; i < table_length; i++)
@@ -80,9 +104,16 @@ void print_user_table(USER *table, uint8_t table_length){
     
 }
 
+/*
+Used to add chars to the hex_seed array, and validate whether or not its a 
+valid hex literal. Returns a zero if the hex_seed contains a non hex character,
+returns a 1 otherwise.
+*/
 uint8_t get_seed(uint8_t seed_index, char char_input){
     uint8_t temp_valid = 0;
-    static uint8_t seed_valid;
+    static uint8_t seed_valid; 
+
+    // If the charachter is a number or a letter between a and f, its valid. other wise its not
     if((char_input >= '0' && char_input <= '9') || (char_input >= 'a' && char_input <= 'f')){
         temp_valid = 1;
     }
@@ -90,37 +121,52 @@ uint8_t get_seed(uint8_t seed_index, char char_input){
         temp_valid = 0;
     }
 
+    // If this is the first entry in the array and its valid, set seed_valid to 1
     if(!seed_index && temp_valid){
         seed_valid = 1;
     }
+    // Otherwise, get the hex_seeds validity by logic anding the current seed_valid with temp_valid.
+    // This will clear it if an invalid character is added to hex_seed, and not set it to one if a valid
+    // Character is added after
     else{
         seed_valid = seed_valid && temp_valid;
     }
-
-    hex_seed[seed_index] = char_input;
-    //printf("%c\n", char_input);
+    hex_seed[seed_index] = char_input; // Always add the char to the array
     return seed_valid;
 }
 
 
+/*
+This interrupt triggers everytime a character is recieved over UART
+*/
 ISR(USART0_RXC_vect){
-
     char char_recieved = USART0.RXDATAL;
+    /*
+    If the state is GET_HIGHSCORE, all characters should be assumed to be name inputs.
+    If the char entered is a new line, the name is done, so null index it and signal its ready.
+    Otherwise, if the name_index is less than 19 (means less than 20 chars), add the 
+    character to the temp_name array and increase the index to accomodate the next entry. 
+    If its now equal to 19, the name is full, so null index the string. No more inputs will 
+    be added to the string.
+    */
     if (state == GET_HIGHSCORE){
         if(char_recieved == '\n'){
             temp_name[name_index] = '\0';
             name_ready = 1;
         }
-        else if(name_index < 20){
+        else if(name_index < 19){
             temp_name[name_index] = char_recieved;
             name_index++;
-            if(name_index == 20){
-                temp_name[21] = '\0';
-                name_ready = 1;
+            if(name_index == 19){
+                temp_name[20] = '\0';
             }
         }
         name_input_received = 1;
     }
+    /*
+    If no name is being entered, and a SEED command was triggered by the user, they can continue 
+    adding to the seed
+    */
     else if(getting_seed){
         if (seed_index < 7)
         {
