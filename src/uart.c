@@ -159,6 +159,7 @@ ISR(USART0_RXC_vect){
             name_index++;
             if(name_index == 20){
                 temp_name[20] = '\0';
+                name_ready = 1;
             }
         }
         name_input_received = 1;
