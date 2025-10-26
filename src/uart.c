@@ -178,24 +178,23 @@ ISR(USART0_RXC_vect){
     Also clear the getting_seed and seed_index to go back to regular UART inputs and prepare for new seed entries
     */
     else if(getting_seed){
-        if (seed_index < 7)
+        if (seed_index < 8)
         {
-            get_seed(seed_index, char_recieved);
+            uint8_t seed_status =  get_seed(seed_index, char_recieved);
             seed_index++;
-        }
-        else if (seed_index == 7){
-            uint8_t seed_status = get_seed(seed_index, char_recieved);
-            if (seed_status){
-                hex_seed[8]= '\0';
-                seq_seed = strtoul((const char*)hex_seed, NULL, 16);
-                seed_ready = 1;
+            if (seed_index == 8){
+                hex_seed[8] = '\0';
+                if (seed_status){
+                    seq_seed = strtoul((const char*)hex_seed, NULL, 16);
+                    seed_ready = 1;
+                }
+                else{
+                    hex_seed[0]= '\0';
+                    seed_ready = 0;
+                }
+                getting_seed = 0;
+                seed_index = 0;
             }
-            else{
-                hex_seed[0]= '\0';
-                seed_ready = 0;
-            }
-            getting_seed = 0;
-            seed_index = 0;
         }
     }
     /*
@@ -263,6 +262,7 @@ ISR(USART0_RXC_vect){
                 seed_index = 0;
                 break;
             default:
+                //Do nothing if the char doesnt match a predefined bit mask
                 break;
         }
     }
