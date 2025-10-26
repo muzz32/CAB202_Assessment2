@@ -112,7 +112,7 @@ int main(void){
             variable is set to zero so the input doesnt get used again, and the button_is_released
             variable is set to ignore checks for button rising edges.
             */
-            else if(uart_input_recieved && (uart_input >= 0 && uart_input <= 1)){
+            else if(uart_input_recieved && (uart_input >= 0 && uart_input <= 3)){
                 input = uart_input;
                 set_outputs(input);
                 state = WAIT_RELEASE;
@@ -241,7 +241,6 @@ int main(void){
                 if (score_check_res)
                 {
                     printf("Enter name: ");
-                    set_start_lfsr(&lfsr);
                     elapsed_time = 0;
                     state = GET_HIGHSCORE;
                 }
